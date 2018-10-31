@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+    <string name="title_activity_movie_details">MovieDetails</string>
+    <string name="action_dropdown">Sort By</string>
+
+    <!-- Options for the dropdown menu -->
+    <string-array name="dropdown_array">
+        <item>Most Popular</item>
+        <item>Top Rated</item>
+    </string-array>
+</resources>
