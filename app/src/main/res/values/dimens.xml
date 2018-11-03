@@ -1,6 +1,6 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="recyclerview_item_height">350dp</dimen>
+    <dimen name="recyclerview_item_height">325dp</dimen>
     <dimen name="recyclerview_item_margin">5dp</dimen>
     <dimen name="defaultMargin">10dp</dimen>
     <dimen name="defaultPadding">8dp</dimen>

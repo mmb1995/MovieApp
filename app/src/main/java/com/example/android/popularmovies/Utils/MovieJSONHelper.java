@@ -33,7 +33,7 @@ public class MovieJSONHelper {
                 String description = movieInfo.getString("overview");
                 String rating = "" + movieInfo.getDouble("vote_average");
                 String releaseDate = movieInfo.getString("release_date");
-                String posterPath = MovieUtils.BASE_IMAGE_URL + movieInfo.getString("poster_path");
+                String posterPath = movieInfo.getString("poster_path");
 
                 Movie movie = new Movie(title, description, posterPath, rating, releaseDate);
                 movies.add(movie);

@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.Utils.Movie;
+import com.example.android.popularmovies.Utils.MovieUtils;
 import com.squareup.picasso.Picasso;
 
 
@@ -32,8 +33,10 @@ public class MovieDetails extends AppCompatActivity {
         Movie movie = (Movie) getIntent().getParcelableExtra("movie");
         if (movie != null) {
             // Loads the poster image into the ImageView
+            String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
+                    + movie.getPosterThumbnail();
             Picasso.get()
-                    .load(movie.getPosterThumbnail())
+                    .load(posterUrl)
                     .into(posterIv);
 
             // Sets the content to display in the relevant TextViews
