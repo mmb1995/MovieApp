@@ -11,15 +11,20 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class MovieUtils {
+    // Uri resources
     private static final String TAG = "Network Request";
-    private static final String BASE_URL = "https://api.themoviedb.org/3/discover/movie?page=1&include_video=false&include_adult=false&sort_by=vote_average.desc&language=en-US";
-    private static final String SORT_BY_PARAM = "sort_by";
+    private static final String BASE_URL = "https://api.themoviedb.org/";
+    private static final String DEFAULT_PATH = "page=1&language=en-US";
     private static final String API_PARAM = "api_key";
     private static final String API_KEY = "";
+    private static final String PAGE_PARAM = "page";
+    private static final String PAGE_VALUE = "1";
+    private static final String LANGUAGE_PARAM = "language";
+    private static final String LANGUAGE_VALUE = "en-US";
 
     // Sort terms
-    public static final String MOST_POPULAR = "popularity.desc";
-    public static final String TOP_RATED= "vote_average.desc";
+    public static final String MOST_POPULAR = "3/movie/popular";
+    public static final String TOP_RATED = "3/movie/top_rated";
 
 
     // Image URL Resources
@@ -30,8 +35,10 @@ public class MovieUtils {
     public static URL buildMovieDatabaseURL(String sortTerm) {
         // builds the URI for theMovieDB
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                .path(sortTerm)
+                .appendQueryParameter(PAGE_PARAM, PAGE_VALUE)
+                .appendQueryParameter(LANGUAGE_PARAM, LANGUAGE_VALUE)
                 .appendQueryParameter(API_PARAM, API_KEY)
-                .appendQueryParameter(SORT_BY_PARAM, sortTerm)
                 .build();
 
         Log.i(TAG, builtUri.toString());

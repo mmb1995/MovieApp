@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String SPINNER_KEY = "spinner";
 
     private RecyclerView mRecyclerView;
-    private ArrayList<Movie> mMoviesList;
     private MovieAdapter mMovieAdapter;
     private Bundle savedInstanceState;
     private Spinner spinner;
@@ -181,8 +180,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
          */
         @Override
         protected void onPostExecute(ArrayList<Movie> movieJsonList) {
-            mMovieAdapter.setMoviesList(movieJsonList);
-            mMovieAdapter.notifyDataSetChanged();
+            if (movieJsonList == null) {
+                // Failed to get data from the API
+                Toast.makeText(MainActivity.this, "Failed to get new movie data. Please try again.",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                mMovieAdapter.setMoviesList(movieJsonList);
+                mMovieAdapter.notifyDataSetChanged();
+            }
         }
     }
 
