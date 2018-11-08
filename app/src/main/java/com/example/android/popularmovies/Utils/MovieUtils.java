@@ -16,7 +16,7 @@ public class MovieUtils {
     private static final String BASE_URL = "https://api.themoviedb.org/";
     private static final String DEFAULT_PATH = "page=1&language=en-US";
     private static final String API_PARAM = "api_key";
-    private static final String API_KEY = "***REMOVED*** git ";
+    private static final String API_KEY = "";
     private static final String PAGE_PARAM = "page";
     private static final String PAGE_VALUE = "1";
     private static final String LANGUAGE_PARAM = "language";
