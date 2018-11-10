@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.android.popularmovies.Utils.Movie;
+import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.squareup.picasso.Picasso;
 
@@ -59,7 +59,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
         // Get the path to the movies poster
         String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_MAIN
-                           + movie.getPosterThumbnail();
+                           + movie.getPosterPath();
 
         // Set the image resource for the ImageView
         Picasso.get()

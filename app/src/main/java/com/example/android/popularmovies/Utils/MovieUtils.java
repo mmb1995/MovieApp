@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class MovieUtils {
     // Uri resources
     private static final String TAG = "Network Request";
-    private static final String BASE_URL = "https://api.themoviedb.org/";
+    public static final String BASE_URL = "https://api.themoviedb.org/3/";
     private static final String DEFAULT_PATH = "page=1&language=en-US";
     private static final String API_PARAM = "api_key";
     private static final String API_KEY = "";

@@ -18,13 +18,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.Utils.Movie;
+import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.Utils.MovieJSONHelper;
 import com.example.android.popularmovies.Utils.MovieUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
 
+// TODO Refactor to remove AsyncTask and connect MainActivity with the ViewModel
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "Main_Activity";

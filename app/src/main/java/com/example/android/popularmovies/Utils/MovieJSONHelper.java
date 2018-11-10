@@ -2,6 +2,8 @@ package com.example.android.popularmovies.Utils;
 
 import android.util.Log;
 
+import com.example.android.popularmovies.model.Movie;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
