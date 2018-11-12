@@ -3,6 +3,7 @@ package com.example.android.popularmovies.ViewModels;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.remote.MovieRepository;
@@ -10,6 +11,8 @@ import com.example.android.popularmovies.remote.MovieRepository;
 import java.util.List;
 
 public class MovieViewModel extends ViewModel {
+
+    private static final String TAG = "MovieViewModel";
 
     // Holds data returned from network requests by the repository
     private MutableLiveData<List<Movie>> mMovieList;
@@ -24,7 +27,7 @@ public class MovieViewModel extends ViewModel {
         this.mMovieRepository = MovieRepository.getInstance();
     }
 
-    // TODO respond to spinner selections
+    // TODO respond to spinner selections and get data to update after load data is called
     // Returns the data from previous configuration or calls the repository to fetch new data
     public LiveData<List<Movie>> getMovieData() {
         if (mMovieList == null) {
@@ -42,8 +45,10 @@ public class MovieViewModel extends ViewModel {
         }
     }
 
+
     // Calls the repository and passes it the term that will be used to query theMovieDB
     private void loadMovieData() {
+        Log.i(TAG, "getting Movie date from repo");
         mMovieList = mMovieRepository.getMovies(this.searchTerm);
     }
 }
