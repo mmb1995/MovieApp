@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.MovieViewModel;
@@ -97,10 +96,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Check for saved selection
         if (this.savedInstanceState != null) {
             spinner.setSelection(this.savedInstanceState.getInt(SPINNER_KEY, 0));
-        } else {
-            Toast.makeText(this,"No Internet Connection Detected", Toast.LENGTH_LONG).show();
         }
-
         return true;
 
     }

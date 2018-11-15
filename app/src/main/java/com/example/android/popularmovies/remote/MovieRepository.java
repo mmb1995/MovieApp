@@ -56,7 +56,9 @@ public class MovieRepository {
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                 Log.i(TAG, response.toString());
-                data.setValue(response.body().getMovies());
+                if (response.isSuccessful()) {
+                    data.setValue(response.body().getMovies());
+                }
             }
 
             @Override
