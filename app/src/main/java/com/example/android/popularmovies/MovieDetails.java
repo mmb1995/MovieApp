@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.Utils.Movie;
+import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.squareup.picasso.Picasso;
 
@@ -34,18 +34,18 @@ public class MovieDetails extends AppCompatActivity {
         if (movie != null) {
             // Loads the poster image into the ImageView
             String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
-                    + movie.getPosterThumbnail();
+                    + movie.getPosterPath();
             Picasso.get()
                     .load(posterUrl)
                     .into(posterIv);
 
             // Sets the content to display in the relevant TextViews
             Log.i(TAG,movie.getReleaseDate());
-            Log.i(TAG, movie.getPosterThumbnail());
+            Log.i(TAG, movie.getPosterPath());
             titleTv.setText(movie.getTitle());
             releaseDateTv.setText(movie.getReleaseDate());
-            ratingTv.setText(movie.getRating());
-            descriptionTv.setText(movie.getDescription());
+            ratingTv.setText(movie.getVoteAverage().toString());
+            descriptionTv.setText(movie.getOverview());
         } else {
             // Movie data unavailable
             finish();
