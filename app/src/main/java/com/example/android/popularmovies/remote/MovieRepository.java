@@ -9,6 +9,7 @@ import com.example.android.popularmovies.model.MovieResponse;
 
 import java.util.List;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,9 +34,13 @@ public class MovieRepository {
     // Singleton constructor to ensure only one instance of MovieRepository is created
     public static MovieRepository getInstance() {
         if (mInstance == null) {
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            OkHttpClient okHttpClient = builder.build();
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(MovieUtils.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
                     .build();
             MovieApiService apiService = retrofit.create(MovieApiService.class);
             return new MovieRepository(apiService);
@@ -56,7 +61,6 @@ public class MovieRepository {
 
             @Override
             public void onFailure(Call<MovieResponse> call, Throwable t) {
-                //
             }
         });
 

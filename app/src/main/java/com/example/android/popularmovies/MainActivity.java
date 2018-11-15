@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         // Sets up the adapter for the RecyclerView
-        Log.i(TAG,"Setting up RecyclerView");
+        Log.i(TAG, "Setting up RecyclerView");
         mMovieAdapter = new MovieAdapter(MainActivity.this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
@@ -76,14 +76,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 mMovieAdapter.setMoviesList(movies);
             }
         });
-
-        if (this.savedInstanceState == null && isConnected()) {
-            // Begins an AsyncTask to query theMovieDB if there is no saved selection
-
-        } else {
-            // No network connection
-            //Toast.makeText(this,"No Internet Connection Detected", Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
