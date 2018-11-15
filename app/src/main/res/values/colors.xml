@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimarySecondary">#1b1b1b</color>
     <color name="colorAccent">#6d6d6d</color>
     <color name="detailTextColor">#FFFFFF</color>
     <color name="appbarPrimaryColor">#FFFFFF</color>

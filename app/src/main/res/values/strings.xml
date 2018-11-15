@@ -3,6 +3,9 @@
     <string name="title_activity_movie_details">MovieDetails</string>
     <string name="action_dropdown">Sort By</string>
 
+    <!--MovieDetails-->
+    <string name="trailer_heading">Videos</string>
+
     <!-- Options for the dropdown menu -->
     <string-array name="dropdown_array">
         <item>Most Popular</item>

@@ -1,15 +1,24 @@
 package com.example.android.popularmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.Utils.MovieUtils;
+import com.example.android.popularmovies.ViewModels.DetailsViewModel;
+import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.model.MovieTrailer;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 
 public class MovieDetails extends AppCompatActivity {
@@ -29,6 +38,7 @@ public class MovieDetails extends AppCompatActivity {
 
         ImageView posterIv = (ImageView) findViewById(R.id.detailPosterImageView);
 
+
         // Get the data passed in by the starting intent
         Movie movie = (Movie) getIntent().getParcelableExtra("movie");
         if (movie != null) {
@@ -46,11 +56,41 @@ public class MovieDetails extends AppCompatActivity {
             releaseDateTv.setText(movie.getReleaseDate());
             ratingTv.setText(movie.getVoteAverage().toString());
             descriptionTv.setText(movie.getOverview());
+
+            // Get the movies id
+            int mMovieId = movie.getId();
+
+            // Set up recyclerview and ViewModel
+            setupRecyclerViewAndViewModel(mMovieId);
         } else {
             // Movie data unavailable
             finish();
             Toast.makeText(this, "There was an Error loading the data", Toast.LENGTH_SHORT).show();
             return;
         }
+    }
+
+    public void setupRecyclerViewAndViewModel(int movieId) {
+
+        // sets up the RecyclerView
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MovieDetails.this);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        // Sets up ViewModel
+        DetailsViewModel viewModel = ViewModelProviders.of(this).get(DetailsViewModel.class);
+        viewModel.init(movieId);
+        viewModel.getMovieTrailers().observe(this, new Observer<List<MovieTrailer>>() {
+            @Override
+            public void onChanged(@Nullable List<MovieTrailer> movieTrailers) {
+                if (movieTrailers != null) {
+                    // Set up adapter with the data returned from the api request
+                    Log.i(TAG, "Sending trailers to the adapter");
+                    MovieTrailerAdapter adapter = new MovieTrailerAdapter(MovieDetails.this,
+                            movieTrailers);
+                    mRecyclerView.setAdapter(adapter);
+                }
+            }
+        });
     }
 }

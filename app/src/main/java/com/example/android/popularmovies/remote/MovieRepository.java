@@ -6,6 +6,8 @@ import android.util.Log;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.model.MovieResponse;
+import com.example.android.popularmovies.model.MovieTrailer;
+import com.example.android.popularmovies.model.MovieTrailerResponse;
 
 import java.util.List;
 
@@ -68,5 +70,24 @@ public class MovieRepository {
 
 
         // COMPLETED add Retrofit logic to query theMovieDB
+    }
+
+    public void getTrailers(final MutableLiveData<List<MovieTrailer>> data, int id) {
+
+        // calls the service to get the trailers associated with the given id
+        mMovieApiService.getTrailers(id, MovieUtils.API_KEY).enqueue(new Callback<MovieTrailerResponse>() {
+            @Override
+            public void onResponse(Call<MovieTrailerResponse> call, Response<MovieTrailerResponse> response) {
+                Log.i(TAG,"Trailer response: " + response.toString());
+                if (response.isSuccessful()) {
+                    data.setValue(response.body().getTrailers());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieTrailerResponse> call, Throwable t) {
+
+            }
+        });
     }
 }

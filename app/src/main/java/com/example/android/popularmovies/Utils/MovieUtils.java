@@ -6,6 +6,7 @@ public class MovieUtils {
 
     // Retrofit resources
     public static final String BASE_URL = "https://api.themoviedb.org/3/";
+    public static final String API_PARAM = "api_key";
     public static final String API_KEY = "";
 
 
@@ -18,6 +19,10 @@ public class MovieUtils {
     public static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     public static final String POSTER_IMAGE_SIZE_MAIN = "w185";
     public static final String POSTER_IMAGE_SIZE_DETAIL = "w780";
+
+    // Trailer Resources
+    public static final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    public static final String YOUTUBE_KEY_PARAM = "v=";
 
 }
 
