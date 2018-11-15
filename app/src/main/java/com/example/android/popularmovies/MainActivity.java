@@ -45,8 +45,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
 
         // Check if any data was passed into the activity from a previous state
+        String searchTerm = MovieUtils.MOST_POPULAR;
         if (savedInstanceState != null) {
             this.savedInstanceState = savedInstanceState;
+            searchTerm = savedInstanceState.getString(SPINNER_KEY);
         }
 
         setContentView(R.layout.activity_main);
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Set up ViewModel and Callback method
         mViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+        mViewModel.init(searchTerm);
         mViewModel.getMovieData().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(@Nullable List<Movie> movies) {
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (isConnected()) {
             // Network is connected so preform background task
-            mViewModel.setSearchTerm(sortTerm);
+            mViewModel.refreshData(sortTerm);
         }
     }
 

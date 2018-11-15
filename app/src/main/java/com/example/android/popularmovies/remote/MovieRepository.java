@@ -44,10 +44,7 @@ public class MovieRepository {
     }
 
 
-    public MutableLiveData<List<Movie>> getMovies(String searchTerm) {
-
-        // This will hold the response from the network request
-        final MutableLiveData<List<Movie>> data = new MutableLiveData<>();
+    public void getMovies(final MutableLiveData<List<Movie>> data, String searchTerm) {
 
         // Calls the service to make a request to theMovieDB
         mMovieApiService.getMovies(searchTerm, MovieUtils.API_KEY).enqueue(new Callback<MovieResponse>() {
@@ -63,7 +60,6 @@ public class MovieRepository {
             }
         });
 
-        return data;
 
         // COMPLETED add Retrofit logic to query theMovieDB
     }

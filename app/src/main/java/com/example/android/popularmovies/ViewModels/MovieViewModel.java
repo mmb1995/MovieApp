@@ -27,18 +27,24 @@ public class MovieViewModel extends ViewModel {
         this.mMovieRepository = MovieRepository.getInstance();
     }
 
-    // TODO respond to spinner selections and get data to update after load data is called
-    // Returns the data from previous configuration or calls the repository to fetch new data
-    public LiveData<List<Movie>> getMovieData() {
-        if (mMovieList == null) {
-            mMovieList = new MutableLiveData<>();
-            loadMovieData();
+    public void init(String searchTerm) {
+        if (this.mMovieList != null) {
+            // Don't create a new instance if one already exists
+            return;
         }
+        this.searchTerm = searchTerm;
+        mMovieList = new MutableLiveData<>();
+        loadMovieData();
+    }
+
+    // COMPLETED respond to spinner selections and get data to update after load data is called
+    // Returns the list of Movie data
+    public LiveData<List<Movie>> getMovieData() {
         return mMovieList;
     }
 
     // updates the searchTerm when the user selects a new term from the spinner
-    public void  setSearchTerm(String searchTerm) {
+    public void refreshData(String searchTerm) {
         if (this.searchTerm != searchTerm) {
             this.searchTerm = searchTerm;
             loadMovieData();
@@ -49,6 +55,6 @@ public class MovieViewModel extends ViewModel {
     // Calls the repository and passes it the term that will be used to query theMovieDB
     private void loadMovieData() {
         Log.i(TAG, "getting Movie date from repo");
-        mMovieList = mMovieRepository.getMovies(this.searchTerm);
+        mMovieRepository.getMovies(this.mMovieList, this.searchTerm);
     }
 }
