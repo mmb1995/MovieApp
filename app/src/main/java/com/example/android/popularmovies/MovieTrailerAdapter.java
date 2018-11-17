@@ -19,7 +19,7 @@ import java.util.List;
 public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapter.MovieTrailerViewHolder> {
 
     private static final String TAG = "MovieTrailerAdapter";
-    private Context mContext;
+    private final Context mContext;
     private List<MovieTrailer> movieTrailerList;
 
     public MovieTrailerAdapter(Context context, List<MovieTrailer> trailerList) {
@@ -50,17 +50,14 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
         final String trailerUrl = MovieUtils.BASE_YOUTUBE_URL + mMovieTrailer.getKey();
 
         // Sets the onClick listener to play the movie trailer
-        movieTrailerViewHolder.mTrailerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // implicit intent to use apps native video player to play the given trailer
-                Log.i(TAG, "Starting intent to play video");
-                Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
-                playTrailerIntent.setData(Uri.parse(trailerUrl));
-                Log.i(TAG, "trailer url = " + trailerUrl);
-                mContext.startActivity(Intent.createChooser(playTrailerIntent, "Complete action using"));
+        movieTrailerViewHolder.mTrailerView.setOnClickListener(view -> {
+            // implicit intent to use apps native video player to play the given trailer
+            Log.i(TAG, "Starting intent to play video");
+            Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
+            playTrailerIntent.setData(Uri.parse(trailerUrl));
+            Log.i(TAG, "trailer url = " + trailerUrl);
+            mContext.startActivity(Intent.createChooser(playTrailerIntent, "Complete action using"));
 
-            }
         });
     }
 
@@ -78,9 +75,9 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
     }
 
     public static class MovieTrailerViewHolder extends RecyclerView.ViewHolder{
-        TextView mTrailerView;
+        final TextView mTrailerView;
 
-        public MovieTrailerViewHolder(View itemView) {
+        MovieTrailerViewHolder(View itemView) {
             super(itemView);
             mTrailerView = itemView.findViewById(R.id.trailerTextView);
         }

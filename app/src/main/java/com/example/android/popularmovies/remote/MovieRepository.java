@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.remote;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
@@ -10,6 +11,7 @@ import com.example.android.popularmovies.model.MovieTrailer;
 import com.example.android.popularmovies.model.MovieTrailerResponse;
 
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -23,7 +25,7 @@ public class MovieRepository {
     private static final String TAG = "MovieRepository";
 
 
-    private MovieApiService mMovieApiService;
+    private final MovieApiService mMovieApiService;
 
     // For singleton purposes
     private static MovieRepository mInstance;
@@ -56,15 +58,15 @@ public class MovieRepository {
         // Calls the service to make a request to theMovieDB
         mMovieApiService.getMovies(searchTerm, MovieUtils.API_KEY).enqueue(new Callback<MovieResponse>() {
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+            public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                 Log.i(TAG, response.toString());
                 if (response.isSuccessful()) {
-                    data.setValue(response.body().getMovies());
+                    data.setValue(Objects.requireNonNull(response.body()).getMovies());
                 }
             }
 
             @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
             }
         });
 
@@ -77,15 +79,15 @@ public class MovieRepository {
         // calls the service to get the trailers associated with the given id
         mMovieApiService.getTrailers(id, MovieUtils.API_KEY).enqueue(new Callback<MovieTrailerResponse>() {
             @Override
-            public void onResponse(Call<MovieTrailerResponse> call, Response<MovieTrailerResponse> response) {
+            public void onResponse(@NonNull Call<MovieTrailerResponse> call, @NonNull Response<MovieTrailerResponse> response) {
                 Log.i(TAG,"Trailer response: " + response.toString());
                 if (response.isSuccessful()) {
-                    data.setValue(response.body().getTrailers());
+                    data.setValue(Objects.requireNonNull(response.body()).getTrailers());
                 }
             }
 
             @Override
-            public void onFailure(Call<MovieTrailerResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MovieTrailerResponse> call, @NonNull Throwable t) {
 
             }
         });

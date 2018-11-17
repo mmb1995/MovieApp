@@ -16,7 +16,7 @@ public class DetailsViewModel extends ViewModel {
     private MutableLiveData<List<MovieTrailer>> mMovieTrailers;
 
     // Reference to the repository used to collect information through network requests
-    private MovieRepository mMovieRepository;
+    private final MovieRepository mMovieRepository;
 
 
     public DetailsViewModel() {
@@ -49,7 +49,7 @@ public class DetailsViewModel extends ViewModel {
      * Calls the repository to fetch the movie trailers associated with a particular movie
      * @param id the id representing the movie being looked at in the details activity
      */
-    public void loadMovieTrailers(int id) {
+    private void loadMovieTrailers(int id) {
         mMovieRepository.getTrailers(this.mMovieTrailers, id);
     }
 }

@@ -1,12 +1,10 @@
 package com.example.android.popularmovies;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,9 +19,6 @@ import android.widget.Spinner;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.MovieViewModel;
-import com.example.android.popularmovies.model.Movie;
-
-import java.util.List;
 
 // COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -33,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // Key for selected spinner value
     private static final String SPINNER_KEY = "spinner";
 
-    private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
     private Bundle savedInstanceState;
     private Spinner spinner;
@@ -55,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setSupportActionBar(toolbar);
 
         // Sets up the GridLayoutManager for the RecyclerView
-        mRecyclerView = findViewById(R.id.rvMoviePosters);
+        RecyclerView mRecyclerView = findViewById(R.id.rvMoviePosters);
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(MainActivity.this, 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
@@ -67,13 +61,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Set up ViewModel and Callback method
         mViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
         mViewModel.init(searchTerm);
-        mViewModel.getMovieData().observe(this, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                // update the movie data held by the adapter
-                Log.i(TAG, "Updating the adapter");
-                mMovieAdapter.setMoviesList(movies);
-            }
+        mViewModel.getMovieData().observe(this, movies -> {
+            // update the movie data held by the adapter
+            Log.i(TAG, "Updating the adapter");
+            mMovieAdapter.setMoviesList(movies);
         });
     }
 
@@ -105,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         String selectedItem = parent.getItemAtPosition(pos).toString();
         Log.i(TAG, selectedItem);
-        String sortTerm = "";
+        String sortTerm;
         if (selectedItem.equals("Most Popular")) {
             sortTerm = MovieUtils.MOST_POPULAR;
         } else {
@@ -113,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         if (isConnected()) {
-            // Network is connected so preform background task
+            // Network is connected so perform background task
             mViewModel.refreshData(sortTerm);
         }
     }
@@ -121,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
-        return;
     }
 
 

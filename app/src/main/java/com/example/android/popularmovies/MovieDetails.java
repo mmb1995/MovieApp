@@ -1,9 +1,7 @@
 package com.example.android.popularmovies;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,15 +13,12 @@ import android.widget.Toast;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.DetailsViewModel;
 import com.example.android.popularmovies.model.Movie;
-import com.example.android.popularmovies.model.MovieTrailer;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 
 public class MovieDetails extends AppCompatActivity {
 
-    public static final String TAG = "MovieDetails";
+    private static final String TAG = "MovieDetails";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +65,7 @@ public class MovieDetails extends AppCompatActivity {
         }
     }
 
-    public void setupRecyclerViewAndViewModel(int movieId) {
+    private void setupRecyclerViewAndViewModel(int movieId) {
 
         // sets up the RecyclerView
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.trailerRecyclerView);
@@ -80,16 +75,13 @@ public class MovieDetails extends AppCompatActivity {
         // Sets up ViewModel
         DetailsViewModel viewModel = ViewModelProviders.of(this).get(DetailsViewModel.class);
         viewModel.init(movieId);
-        viewModel.getMovieTrailers().observe(this, new Observer<List<MovieTrailer>>() {
-            @Override
-            public void onChanged(@Nullable List<MovieTrailer> movieTrailers) {
-                if (movieTrailers != null) {
-                    // Set up adapter with the data returned from the api request
-                    Log.i(TAG, "Sending trailers to the adapter");
-                    MovieTrailerAdapter adapter = new MovieTrailerAdapter(MovieDetails.this,
-                            movieTrailers);
-                    mRecyclerView.setAdapter(adapter);
-                }
+        viewModel.getMovieTrailers().observe(this, movieTrailers -> {
+            if (movieTrailers != null) {
+                // Set up adapter with the data returned from the api request
+                Log.i(TAG, "Sending trailers to the adapter");
+                MovieTrailerAdapter adapter = new MovieTrailerAdapter(MovieDetails.this,
+                        movieTrailers);
+                mRecyclerView.setAdapter(adapter);
             }
         });
     }
