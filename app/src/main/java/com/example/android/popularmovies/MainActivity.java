@@ -1,9 +1,6 @@
 package com.example.android.popularmovies;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -102,11 +99,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else {
             sortTerm = MovieUtils.TOP_RATED;
         }
-
-        if (isConnected()) {
-            // Network is connected so perform background task
-            mViewModel.refreshData(sortTerm);
-        }
+        // Tells ViewModel to respond to user selection
+        mViewModel.refreshData(sortTerm);
     }
 
     @Override
@@ -114,17 +108,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Do nothing
     }
 
-
-    /**
-     * Checks wether the device is connected to a Network
-     * @return True if the device is connected, false otherwise
-     */
-    public boolean isConnected() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
