@@ -75,6 +75,8 @@ public class MovieDetails extends AppCompatActivity {
         // Sets up ViewModel
         DetailsViewModel viewModel = ViewModelProviders.of(this).get(DetailsViewModel.class);
         viewModel.init(movieId);
+
+        // Set up Observer for MovieTrailer information
         viewModel.getMovieTrailers().observe(this, movieTrailers -> {
             if (movieTrailers != null) {
                 // Set up adapter with the data returned from the api request
@@ -82,6 +84,13 @@ public class MovieDetails extends AppCompatActivity {
                 MovieTrailerAdapter adapter = new MovieTrailerAdapter(MovieDetails.this,
                         movieTrailers);
                 mRecyclerView.setAdapter(adapter);
+            }
+        });
+
+        // Set up Observer for MovieReview information
+        viewModel.getMovieReviews().observe(this, movieReviews -> {
+            if (movieReviews != null) {
+
             }
         });
     }

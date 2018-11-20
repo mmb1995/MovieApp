@@ -7,6 +7,8 @@ import android.util.Log;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.model.MovieResponse;
+import com.example.android.popularmovies.model.MovieReview;
+import com.example.android.popularmovies.model.MovieReviewResponse;
 import com.example.android.popularmovies.model.MovieTrailer;
 import com.example.android.popularmovies.model.MovieTrailerResponse;
 
@@ -67,6 +69,7 @@ public class MovieRepository {
 
             @Override
             public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
+                t.printStackTrace();
             }
         });
 
@@ -88,7 +91,26 @@ public class MovieRepository {
 
             @Override
             public void onFailure(@NonNull Call<MovieTrailerResponse> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
 
+    public void getReviews(final MutableLiveData<List<MovieReview>> data, int id) {
+
+        // calls the service to get the user reviews associated with the given movie id
+        mMovieApiService.getReviews(id, MovieUtils.API_KEY).enqueue(new Callback<MovieReviewResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MovieReviewResponse> call, @NonNull Response<MovieReviewResponse> response) {
+                Log.i(TAG,"Review response: " + response.toString());
+                if (response.isSuccessful()) {
+                    data.setValue(Objects.requireNonNull(response.body()).getTrailers());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MovieReviewResponse> call, @NonNull Throwable t) {
+                t.printStackTrace();
             }
         });
     }
