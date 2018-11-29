@@ -18,7 +18,7 @@ public class MovieViewModel extends ViewModel {
     private MutableLiveData<List<Movie>> mMovieList;
 
     // Reference to the repository used to collect information through network requests
-    private MovieRepository mMovieRepository;
+    private final MovieRepository mMovieRepository;
 
     // Holds the sort term selected by the user
     private String searchTerm;
@@ -45,7 +45,7 @@ public class MovieViewModel extends ViewModel {
 
     // updates the searchTerm when the user selects a new term from the spinner
     public void refreshData(String searchTerm) {
-        if (this.searchTerm != searchTerm) {
+        if (!this.searchTerm.equals(searchTerm)) {
             this.searchTerm = searchTerm;
             loadMovieData();
         }
@@ -54,7 +54,7 @@ public class MovieViewModel extends ViewModel {
 
     // Calls the repository and passes it the term that will be used to query theMovieDB
     private void loadMovieData() {
-        Log.i(TAG, "getting Movie date from repo");
+        Log.i(TAG, "getting Movie data from repo");
         mMovieRepository.getMovies(this.mMovieList, this.searchTerm);
     }
 }

@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 public class MovieDetails extends AppCompatActivity {
 
-    public static final String TAG = "MovieDetails";
+    private static final String TAG = "MovieDetails";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,8 @@ public class MovieDetails extends AppCompatActivity {
                     + movie.getPosterPath();
             Picasso.get()
                     .load(posterUrl)
+                    .placeholder(R.drawable.loading_image)
+                    .error(R.drawable.poster_error)
                     .into(posterIv);
 
             // Sets the content to display in the relevant TextViews
@@ -49,7 +51,8 @@ public class MovieDetails extends AppCompatActivity {
         } else {
             // Movie data unavailable
             finish();
-            Toast.makeText(this, "There was an Error loading the data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "There was an Error loading the data",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
     }

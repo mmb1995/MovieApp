@@ -50,7 +50,7 @@ public class Movie implements Parcelable
     }
             ;
 
-    protected Movie(Parcel in) {
+    private Movie(Parcel in) {
         this.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.voteAverage = ((Double) in.readValue((Double.class.getClassLoader())));
         this.title = ((String) in.readValue((String.class.getClassLoader())));

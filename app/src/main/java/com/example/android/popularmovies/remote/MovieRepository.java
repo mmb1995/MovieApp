@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.remote;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
@@ -21,7 +22,7 @@ public class MovieRepository {
     private static final String TAG = "MovieRepository";
 
 
-    private MovieApiService mMovieApiService;
+    private final MovieApiService mMovieApiService;
 
     // For singleton purposes
     private static MovieRepository mInstance;
@@ -49,18 +50,31 @@ public class MovieRepository {
     }
 
 
+    /**
+     * Performs network request to fetch a list of movies from theMovieDb
+     * @param data LiveData object that holds the list of movies returned from the request
+     * @param searchTerm a search term to query theMovieDb by different categories
+     */
     public void getMovies(final MutableLiveData<List<Movie>> data, String searchTerm) {
 
         // Calls the service to make a request to theMovieDB
         mMovieApiService.getMovies(searchTerm, MovieUtils.API_KEY).enqueue(new Callback<MovieResponse>() {
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+            public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                 Log.i(TAG, response.toString());
-                data.setValue(response.body().getMovies());
+                if (response.isSuccessful()) {
+                    data.setValue(response.body().getMovies());
+                } else {
+                    // the response did not return valid data
+                    onFailure(call, new Throwable("api key likely missing"));
+                }
             }
 
             @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
+                call.cancel();
+                Log.i(TAG,"The network request failed");
+                Log.e(TAG,t.toString());
             }
         });
 

@@ -2,9 +2,6 @@ package com.example.android.popularmovies;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.MovieViewModel;
@@ -34,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // Key for selected spinner value
     private static final String SPINNER_KEY = "spinner";
 
-    private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
     private Bundle savedInstanceState;
     private Spinner spinner;
@@ -56,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setSupportActionBar(toolbar);
 
         // Sets up the GridLayoutManager for the RecyclerView
-        mRecyclerView = findViewById(R.id.rvMoviePosters);
+        RecyclerView mRecyclerView = findViewById(R.id.rvMoviePosters);
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(MainActivity.this, 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
@@ -88,8 +83,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         spinner.setOnItemSelectedListener(this);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.dropdown_array,
-                android.R.layout.simple_spinner_dropdown_item);
+        // Create the spinner's adapter
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.dropdown_array, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
@@ -97,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Check for saved selection
         if (this.savedInstanceState != null) {
             spinner.setSelection(this.savedInstanceState.getInt(SPINNER_KEY, 0));
-        } else {
-            Toast.makeText(this,"No Internet Connection Detected", Toast.LENGTH_LONG).show();
         }
 
         return true;
@@ -109,17 +103,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         String selectedItem = parent.getItemAtPosition(pos).toString();
         Log.i(TAG, selectedItem);
-        String sortTerm = "";
+
+        String sortTerm;
         if (selectedItem.equals("Most Popular")) {
             sortTerm = MovieUtils.MOST_POPULAR;
         } else {
             sortTerm = MovieUtils.TOP_RATED;
         }
 
-        if (isConnected()) {
-            // Network is connected so preform background task
-            mViewModel.refreshData(sortTerm);
-        }
+        // refresh the data in the ViewModel
+        mViewModel.refreshData(sortTerm);
     }
 
     @Override
@@ -128,21 +121,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return;
     }
 
-
-    /**
-     * Checks wether the device is connected to a Network
-     * @return True if the device is connected, false otherwise
-     */
-    public boolean isConnected() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SPINNER_KEY, this.spinner.getSelectedItemPosition() );
+        outState.putInt(SPINNER_KEY, this.spinner.getSelectedItemPosition());
     }
 }

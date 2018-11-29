@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,40 +21,34 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      *  Custom ViewHolder
      */
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
-        ImageView mMoviePosterImageView;
+        final ImageView mMoviePosterImageView;
 
-        public MovieViewHolder(View itemView) {
+        MovieViewHolder(View itemView) {
             super(itemView);
             mMoviePosterImageView = itemView.findViewById(R.id.ivMoviePosterItem);
         }
     }
 
-
-    private Context mContext;
+    private final Context mContext;
     private List<Movie> mMoviesList;
 
     public MovieAdapter(Context context) {
         this.mContext = context;
     }
 
-    public MovieAdapter(Context context, List<Movie> moviesList) {
-        this.mContext = context;
-        this.mMoviesList = moviesList;
-    }
-
+    @NonNull
     @Override
-    public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflates the custom layout
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View rootView = inflater.inflate(R.layout.recyclerview_item, parent, false);
 
         // Return a new holder instance
-        MovieViewHolder viewHolder = new MovieViewHolder(rootView);
-        return viewHolder;
+        return new MovieViewHolder(rootView);
     }
 
     @Override
-    public void onBindViewHolder(final MovieViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         // Get the movie at the given position
         final Movie movie = mMoviesList.get(position);
 
@@ -64,6 +59,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         // Set the image resource for the ImageView
         Picasso.get()
                 .load(posterUrl)
+                .placeholder(R.drawable.loading_image)
+                .error(R.drawable.poster_error)
                 .into(holder.mMoviePosterImageView);
 
         // Set the onCLick method for the image so that it will launch the detail activity when
