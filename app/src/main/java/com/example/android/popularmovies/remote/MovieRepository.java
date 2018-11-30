@@ -49,7 +49,6 @@ public class MovieRepository {
         return mInstance;
     }
 
-
     /**
      * Performs network request to fetch a list of movies from theMovieDb
      * @param data LiveData object that holds the list of movies returned from the request

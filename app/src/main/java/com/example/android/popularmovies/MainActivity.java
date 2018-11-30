@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String TAG = "Main_Activity";
 
     // Key for selected spinner value
-    private static final String SPINNER_KEY = "spinner";
+    private static final String SPINNER_POSITION = "spinnerPos";
+    private static final String SPINNER_VALUE = "spinnerVal";
 
     private MovieAdapter mMovieAdapter;
     private Bundle savedInstanceState;
@@ -40,13 +41,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
 
         // Check if any data was passed into the activity from a previous state
-        String searchTerm = MovieUtils.MOST_POPULAR;
+        String searchTerm;
         if (savedInstanceState != null) {
+            Log.i(TAG, "Restoring previous state");
             this.savedInstanceState = savedInstanceState;
-            searchTerm = savedInstanceState.getString(SPINNER_KEY);
+            searchTerm = savedInstanceState.getString(SPINNER_VALUE, MovieUtils.MOST_POPULAR);
+        } else {
+            searchTerm = MovieUtils.MOST_POPULAR;
         }
 
         setContentView(R.layout.activity_main);
+        Log.i(TAG, searchTerm);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -92,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Check for saved selection
         if (this.savedInstanceState != null) {
-            spinner.setSelection(this.savedInstanceState.getInt(SPINNER_KEY, 0));
+            spinner.setSelection(this.savedInstanceState.getInt(SPINNER_POSITION, 0));
         }
 
         return true;
@@ -124,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SPINNER_KEY, this.spinner.getSelectedItemPosition());
+        Log.i(TAG,"Saving spinner selection");
+        outState.putInt(SPINNER_POSITION, this.spinner.getSelectedItemPosition());
+        outState.putString(SPINNER_VALUE, spinner.getSelectedItem().toString());
     }
 }
