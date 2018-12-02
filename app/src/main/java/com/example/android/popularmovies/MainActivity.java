@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,12 +19,17 @@ import android.widget.Spinner;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.MovieViewModel;
+import com.example.android.popularmovies.adapter.MovieAdapter;
+import com.example.android.popularmovies.adapter.RecyclerViewClickListener;
 import com.example.android.popularmovies.model.Movie;
 
 import java.util.List;
 
 // COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+// TODO: add shared preferences to save spinner selection
+// TODO: add visual feedback for clicks
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
+        RecyclerViewClickListener{
 
     private static final String TAG = "Main_Activity";
 
@@ -32,8 +38,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String SPINNER_VALUE = "spinnerVal";
 
     private MovieAdapter mMovieAdapter;
-    private Bundle savedInstanceState;
     private Spinner spinner;
+    private Bundle savedInstanceState;
     private MovieViewModel mViewModel;
 
     @Override
@@ -50,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             searchTerm = MovieUtils.MOST_POPULAR;
         }
 
+        // Begin setting up ui
         setContentView(R.layout.activity_main);
         Log.i(TAG, searchTerm);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,8 +68,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         // Sets up the adapter for the RecyclerView
-        Log.i(TAG, "Setting up RecyclerView");
-        mMovieAdapter = new MovieAdapter(MainActivity.this);
+        mMovieAdapter = new MovieAdapter(MainActivity.this, MainActivity.this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
         // Set up ViewModel and Callback method
@@ -92,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.dropdown_array, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinner.setAdapter(adapter);
 
         // Check for saved selection
@@ -101,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         return true;
-
     }
 
     @Override
@@ -120,17 +124,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mViewModel.refreshData(sortTerm);
     }
 
+    /**
+     * This method has to be implemented
+     * @param parent
+     */
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
         return;
     }
 
+    /**
+     * Launches the detail activity to display information about a selected movie
+     * @param position the position of the selected movie in the adapter
+     */
+    @Override
+    public void onClick(int position) {
+       Movie selectedMovie =  mMovieAdapter.getItemAtPosition(position);
+        Intent detailIntent = new Intent(MainActivity.this, MovieDetails.class);
+        detailIntent.putExtra("movie", selectedMovie);
+        startActivity(detailIntent);
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         Log.i(TAG,"Saving spinner selection");
         outState.putInt(SPINNER_POSITION, this.spinner.getSelectedItemPosition());
         outState.putString(SPINNER_VALUE, spinner.getSelectedItem().toString());
+        super.onSaveInstanceState(outState);
     }
 }

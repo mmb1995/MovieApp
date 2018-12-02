@@ -31,6 +31,8 @@ public class MovieDetails extends AppCompatActivity {
 
         // Get the data passed in by the starting intent
         Movie movie = (Movie) getIntent().getParcelableExtra("movie");
+
+        // load the movie data into the ui
         if (movie != null) {
             // Loads the poster image into the ImageView
             String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
@@ -56,4 +58,6 @@ public class MovieDetails extends AppCompatActivity {
             return;
         }
     }
+
+
 }

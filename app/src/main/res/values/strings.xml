@@ -8,4 +8,6 @@
         <item>Most Popular</item>
         <item>Top Rated</item>
     </string-array>
+
+    <!-- Retrofit Resources -->
 </resources>

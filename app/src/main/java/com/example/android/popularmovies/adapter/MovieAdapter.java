@@ -1,7 +1,6 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,31 +8,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Utils.MovieUtils;
+import com.example.android.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    /**
-     *  Custom ViewHolder
-     */
-    public static class MovieViewHolder extends RecyclerView.ViewHolder {
-        final ImageView mMoviePosterImageView;
-
-        MovieViewHolder(View itemView) {
-            super(itemView);
-            mMoviePosterImageView = itemView.findViewById(R.id.ivMoviePosterItem);
-        }
-    }
-
     private final Context mContext;
     private List<Movie> mMoviesList;
+    private RecyclerViewClickListener mListener;
 
-    public MovieAdapter(Context context) {
+    public MovieAdapter(Context context, RecyclerViewClickListener listener) {
         this.mContext = context;
+        this.mListener = listener;
     }
 
     @NonNull
@@ -44,7 +34,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         View rootView = inflater.inflate(R.layout.recyclerview_item, parent, false);
 
         // Return a new holder instance
-        return new MovieViewHolder(rootView);
+        return new MovieViewHolder(rootView, mListener);
     }
 
     @Override
@@ -63,17 +53,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 .error(R.drawable.poster_error)
                 .into(holder.mMoviePosterImageView);
 
-        // Set the onCLick method for the image so that it will launch the detail activity when
-        // it is clicked on by the user.
-        holder.mMoviePosterImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent detailIntent = new Intent(mContext, MovieDetails.class);
-                detailIntent.putExtra("movie", movie);
-                mContext.startActivity(detailIntent);
-            }
-        });
-
     }
 
     @Override
@@ -84,9 +63,41 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return this.mMoviesList.size();
     }
 
+    /**
+     * Returns the movie at the given position
+     * @param position
+     * @return
+     */
+    public Movie getItemAtPosition(int position) {
+        if (mMoviesList != null && position >= 0) {
+            return mMoviesList.get(position);
+        }
+        return null;
+    }
+
     public void setMoviesList(List<Movie> movieList) {
         this.mMoviesList = movieList;
         this.notifyDataSetChanged();
+    }
+
+    /**
+     *  Custom ViewHolder
+     */
+    public static class MovieViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener {
+        final ImageView mMoviePosterImageView;
+        private final RecyclerViewClickListener mListener;
+
+
+        MovieViewHolder(View itemView, RecyclerViewClickListener listener) {
+            super(itemView);
+            mMoviePosterImageView = itemView.findViewById(R.id.ivMoviePosterItem);
+            mListener = listener;
+            itemView.setOnClickListener(this);
+        }
+
+        public void onClick(View view) {
+            mListener.onClick(getAdapterPosition());
+        }
     }
 }
 

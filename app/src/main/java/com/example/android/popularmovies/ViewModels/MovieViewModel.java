@@ -42,6 +42,7 @@ public class MovieViewModel extends ViewModel {
         Log.i(TAG,"Setting up view model");
         if (this.mMovieList != null) {
             // Don't create a new instance if one already exists
+            Log.i(TAG, "Data already present");
             return;
         }
         Log.i(TAG, "Init search value = " + searchTerm);

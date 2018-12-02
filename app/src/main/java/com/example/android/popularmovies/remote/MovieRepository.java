@@ -17,6 +17,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
+// TODO add logic to check network state before api calls
 public class MovieRepository {
 
     private static final String TAG = "MovieRepository";
