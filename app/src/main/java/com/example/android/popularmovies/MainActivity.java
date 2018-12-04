@@ -1,3 +1,5 @@
+package com.example.android.popularmovies;
+
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -17,8 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.MovieDetails;
-import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.MovieViewModel;
 import com.example.android.popularmovies.adapter.MovieAdapter;
