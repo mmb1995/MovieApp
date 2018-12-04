@@ -5,10 +5,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
-import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.model.MovieResponse;
 
-import java.util.List;
+import java.util.Objects;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -17,8 +16,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-
-// TODO add logic to check network state before api calls
+/**
+ * This class performs network requests on a background thread, and is the
+ * single source of truth for fetching data
+ */
 public class MovieRepository {
 
     private static final String TAG = "MovieRepository";
@@ -46,7 +47,7 @@ public class MovieRepository {
                     .client(okHttpClient)
                     .build();
             MovieApiService apiService = retrofit.create(MovieApiService.class);
-            return new MovieRepository(apiService);
+            mInstance = new MovieRepository(apiService);
         }
         return mInstance;
     }
@@ -56,7 +57,7 @@ public class MovieRepository {
      * @param data LiveData object that holds the list of movies returned from the request
      * @param searchTerm a search term to query theMovieDb by different categories
      */
-    public void getMovies(final MutableLiveData<List<Movie>> data, String searchTerm) {
+    public void getMovies(final MutableLiveData<MovieApiResource> data, String searchTerm) {
 
         // Calls the service to make a request to theMovieDB
         mMovieApiService.getMovies(searchTerm, MovieUtils.API_KEY).enqueue(new Callback<MovieResponse>() {
@@ -64,7 +65,7 @@ public class MovieRepository {
             public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                 Log.i(TAG, response.toString());
                 if (response.isSuccessful()) {
-                    data.setValue(response.body().getMovies());
+                    data.setValue(MovieApiResource.success(Objects.requireNonNull(response.body()).getMovies()));
                 } else {
                     // the response did not return valid data
                     onFailure(call, new Throwable("api key likely missing"));
@@ -74,8 +75,7 @@ public class MovieRepository {
             @Override
             public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
                 call.cancel();
-                Log.i(TAG,"The network request failed");
-                Log.e(TAG,t.toString());
+                data.setValue(MovieApiResource.error(t));
             }
         });
 

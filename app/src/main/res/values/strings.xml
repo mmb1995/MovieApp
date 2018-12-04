@@ -9,5 +9,10 @@
         <item>Top Rated</item>
     </string-array>
 
+    <!-- Error Messages -->
+    <string name="apiError">Failed to load movies, please check your internet connection.</string>
+
+
     <!-- Retrofit Resources -->
+
 </resources>

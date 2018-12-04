@@ -19,7 +19,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private final Context mContext;
     private List<Movie> mMoviesList;
-    private RecyclerViewClickListener mListener;
+    private final RecyclerViewClickListener mListener;
 
     public MovieAdapter(Context context, RecyclerViewClickListener listener) {
         this.mContext = context;
@@ -31,7 +31,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflates the custom layout
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View rootView = inflater.inflate(R.layout.recyclerview_item, parent, false);
+        View rootView = inflater.inflate(R.layout.item_movie_poster, parent, false);
 
         // Return a new holder instance
         return new MovieViewHolder(rootView, mListener);
@@ -43,8 +43,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         final Movie movie = mMoviesList.get(position);
 
         // Get the path to the movies poster
-        String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_MAIN
-                           + movie.getPosterPath();
+        String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_MAIN_GRID
+                    + movie.getPosterPath();
 
         // Set the image resource for the ImageView
         Picasso.get()

@@ -5,17 +5,15 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
-import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.remote.MovieApiResource;
 import com.example.android.popularmovies.remote.MovieRepository;
-
-import java.util.List;
 
 public class MovieViewModel extends ViewModel {
 
     private static final String TAG = "MovieViewModel";
 
     // Holds data returned from network requests by the repository
-    private MutableLiveData<List<Movie>> mMovieList;
+    private MutableLiveData<MovieApiResource> mMovieResource;
 
     // Reference to the repository used to collect information through network requests
     private final MovieRepository mMovieRepository;
@@ -35,26 +33,26 @@ public class MovieViewModel extends ViewModel {
     public MovieViewModel(MovieRepository repo, String term) {
         this.mMovieRepository = repo;
         this.searchTerm = term;
-        this.mMovieList = new MutableLiveData<>();
+        this.mMovieResource = new MutableLiveData<>();
     }
 
     public void init(String searchTerm) {
         Log.i(TAG,"Setting up view model");
-        if (this.mMovieList != null) {
+        if (this.mMovieResource != null) {
             // Don't create a new instance if one already exists
             Log.i(TAG, "Data already present");
             return;
         }
         Log.i(TAG, "Init search value = " + searchTerm);
         this.searchTerm = searchTerm;
-        mMovieList = new MutableLiveData<>();
+        mMovieResource = new MutableLiveData<>();
         loadMovieData();
     }
 
     // COMPLETED respond to spinner selections and get data to update after load data is called
     // Returns the list of Movie data
-    public LiveData<List<Movie>> getMovieData() {
-        return mMovieList;
+    public LiveData<MovieApiResource> getMovieData() {
+        return mMovieResource;
     }
 
     // updates the searchTerm when the user selects a new term from the spinner
@@ -69,6 +67,6 @@ public class MovieViewModel extends ViewModel {
     // Calls the repository and passes it the term that will be used to query theMovieDB
     private void loadMovieData() {
         //Log.i(TAG, "getting Movie data from repo");
-        mMovieRepository.getMovies(this.mMovieList, this.searchTerm);
+        mMovieRepository.getMovies(this.mMovieResource, this.searchTerm);
     }
 }

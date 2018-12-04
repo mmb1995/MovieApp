@@ -5,10 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.Utils.MovieUtils;
+import com.example.android.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
 
@@ -51,11 +50,8 @@ public class MovieDetails extends AppCompatActivity {
             ratingTv.setText(movie.getVoteAverage().toString());
             descriptionTv.setText(movie.getOverview());
         } else {
-            // Movie data unavailable
+            // End activity if movie data is unavailable
             finish();
-            Toast.makeText(this, "There was an Error loading the data",
-                    Toast.LENGTH_SHORT).show();
-            return;
         }
     }
 

@@ -13,7 +13,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimary"
         android:elevation="4dp"
         app:titleTextColor="@color/appbarPrimaryColor"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
@@ -24,6 +24,7 @@
         android:id="@+id/rvMoviePosters"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="@dimen/gridPadding"
         android:scrollbars="vertical"/>
 
 </LinearLayout>
