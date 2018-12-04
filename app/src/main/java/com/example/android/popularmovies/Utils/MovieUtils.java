@@ -2,7 +2,7 @@ package com.example.android.popularmovies.Utils;
 
 /**
  * Util class that stores constants needed for Network Requests. These values are needed in
- * multiple classes so they are stored so than any class that needs them can get them
+ * multiple classes so they are stored here so that any class that needs them can get them
  * Note: **Add your theMovieDb api key to the API_KEY constant**
  */
 public class MovieUtils {
