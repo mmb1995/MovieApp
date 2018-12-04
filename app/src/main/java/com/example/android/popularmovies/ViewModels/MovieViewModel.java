@@ -36,6 +36,11 @@ public class MovieViewModel extends ViewModel {
         this.mMovieResource = new MutableLiveData<>();
     }
 
+    /**
+     * This needs to be called after an activity or fragment receives  an instance of the viewmodel,
+     * this is used to set up the data stored in the viewmodel.
+     * @param searchTerm
+     */
     public void init(String searchTerm) {
         Log.i(TAG,"Setting up view model");
         if (this.mMovieResource != null) {

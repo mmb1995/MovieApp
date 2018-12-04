@@ -15,7 +15,7 @@ public class MovieUtils {
     public static final String TOP_RATED = "top_rated";
 
     // Image URL Resources
-    public static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    public static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
     public static final String POSTER_IMAGE_SIZE_MAIN_GRID = "w185";
     public static final String POSTER_IMAGE_SIZE_DETAIL = "w780";
 

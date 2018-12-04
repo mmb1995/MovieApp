@@ -3,6 +3,7 @@ package com.example.android.popularmovies.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
+    private static final String TAG = "MovieAdapter";
 
     private final Context mContext;
     private List<Movie> mMoviesList;
@@ -45,6 +47,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         // Get the path to the movies poster
         String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_MAIN_GRID
                     + movie.getPosterPath();
+        Log.i(TAG, "Poster at: " + posterUrl);
 
         // Set the image resource for the ImageView
         Picasso.get()
@@ -75,6 +78,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return null;
     }
 
+    /**
+     * Updates the data and notifies the adapter
+     * @param movieList the new list of movie data
+     */
     public void setMoviesList(List<Movie> movieList) {
         this.mMoviesList = movieList;
         this.notifyDataSetChanged();
