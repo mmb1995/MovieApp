@@ -1,13 +1,13 @@
 package com.example.android.popularmovies.remote;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
-import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.model.MovieResponse;
 
-import java.util.List;
+import java.util.Objects;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -16,12 +16,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * This class performs network requests on a background thread, and is the
+ * single source of truth for fetching data
+ */
 public class MovieRepository {
 
     private static final String TAG = "MovieRepository";
 
 
-    private MovieApiService mMovieApiService;
+    private final MovieApiService mMovieApiService;
 
     // For singleton purposes
     private static MovieRepository mInstance;
@@ -43,24 +47,35 @@ public class MovieRepository {
                     .client(okHttpClient)
                     .build();
             MovieApiService apiService = retrofit.create(MovieApiService.class);
-            return new MovieRepository(apiService);
+            mInstance = new MovieRepository(apiService);
         }
         return mInstance;
     }
 
-
-    public void getMovies(final MutableLiveData<List<Movie>> data, String searchTerm) {
+    /**
+     * Performs network request to fetch a list of movies from theMovieDb
+     * @param data LiveData object that holds the list of movies returned from the request
+     * @param searchTerm a search term to query theMovieDb by different categories
+     */
+    public void getMovies(final MutableLiveData<MovieApiResource> data, String searchTerm) {
 
         // Calls the service to make a request to theMovieDB
         mMovieApiService.getMovies(searchTerm, MovieUtils.API_KEY).enqueue(new Callback<MovieResponse>() {
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+            public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                 Log.i(TAG, response.toString());
-                data.setValue(response.body().getMovies());
+                if (response.isSuccessful()) {
+                    data.setValue(MovieApiResource.success(Objects.requireNonNull(response.body()).getMovies()));
+                } else {
+                    // the response did not return valid data
+                    onFailure(call, new Throwable("api key likely missing"));
+                }
             }
 
             @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
+                call.cancel();
+                data.setValue(MovieApiResource.error(t));
             }
         });
 

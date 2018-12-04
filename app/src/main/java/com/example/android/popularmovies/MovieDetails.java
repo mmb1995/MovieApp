@@ -5,16 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.Utils.MovieUtils;
+import com.example.android.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
 
 public class MovieDetails extends AppCompatActivity {
 
-    public static final String TAG = "MovieDetails";
+    private static final String TAG = "MovieDetails";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +30,16 @@ public class MovieDetails extends AppCompatActivity {
 
         // Get the data passed in by the starting intent
         Movie movie = (Movie) getIntent().getParcelableExtra("movie");
+
+        // load the movie data into the ui
         if (movie != null) {
             // Loads the poster image into the ImageView
             String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
                     + movie.getPosterPath();
             Picasso.get()
                     .load(posterUrl)
+                    .placeholder(R.drawable.loading_image)
+                    .error(R.drawable.poster_error)
                     .into(posterIv);
 
             // Sets the content to display in the relevant TextViews
@@ -47,10 +50,10 @@ public class MovieDetails extends AppCompatActivity {
             ratingTv.setText(movie.getVoteAverage().toString());
             descriptionTv.setText(movie.getOverview());
         } else {
-            // Movie data unavailable
+            // End activity if movie data is unavailable
             finish();
-            Toast.makeText(this, "There was an Error loading the data", Toast.LENGTH_SHORT).show();
-            return;
         }
     }
+
+
 }

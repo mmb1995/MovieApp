@@ -5,4 +5,6 @@
     <dimen name="defaultMargin">10dp</dimen>
     <dimen name="defaultPadding">8dp</dimen>
     <dimen name="movieTitleElevation">2dp</dimen>
+    <dimen name="gridMargin">2dp</dimen>
+    <dimen name="gridPadding">2dp</dimen>
 </resources>

@@ -2,9 +2,8 @@ package com.example.android.popularmovies;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -22,22 +21,25 @@ import android.widget.Toast;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.MovieViewModel;
+import com.example.android.popularmovies.adapter.MovieAdapter;
+import com.example.android.popularmovies.adapter.RecyclerViewClickListener;
 import com.example.android.popularmovies.model.Movie;
-
-import java.util.List;
+import com.example.android.popularmovies.remote.MovieApiResource;
 
 // COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
+        RecyclerViewClickListener{
 
     private static final String TAG = "Main_Activity";
 
-    // Key for selected spinner value
-    private static final String SPINNER_KEY = "spinner";
+    // Key for selected mSpinner value
+    private static final String BUNDLE_POSITION = "spinnerPos";
+    private static final String BUNDLE_VALUE = "spinnerVal";
 
-    private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
-    private Bundle savedInstanceState;
-    private Spinner spinner;
+    private Spinner mSpinner;
+    private Bundle mBundle;
     private MovieViewModel mViewModel;
 
     @Override
@@ -45,35 +47,63 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
 
         // Check if any data was passed into the activity from a previous state
-        String searchTerm = MovieUtils.MOST_POPULAR;
+        String searchTerm;
         if (savedInstanceState != null) {
-            this.savedInstanceState = savedInstanceState;
-            searchTerm = savedInstanceState.getString(SPINNER_KEY);
+            Log.i(TAG, "Restoring previous state");
+            this.mBundle = savedInstanceState;
+            searchTerm = savedInstanceState.getString(BUNDLE_VALUE, MovieUtils.MOST_POPULAR);
+        } else {
+            searchTerm = MovieUtils.MOST_POPULAR;
         }
 
+        // Begin setting up ui
         setContentView(R.layout.activity_main);
+        Log.i(TAG, searchTerm);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Sets up the GridLayoutManager for the RecyclerView
-        mRecyclerView = findViewById(R.id.rvMoviePosters);
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        RecyclerView mRecyclerView = findViewById(R.id.rvMoviePosters);
+
+        // Checks the orientation to decide how to display the grid
+        int orientation = getResources().getConfiguration().orientation;
+        GridLayoutManager mGridLayoutManager;
+        if(orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mGridLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        } else {
+            mGridLayoutManager = new GridLayoutManager(MainActivity.this, 3);
+        }
+
+        // Set the layout manager
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         // Sets up the adapter for the RecyclerView
-        Log.i(TAG, "Setting up RecyclerView");
-        mMovieAdapter = new MovieAdapter(MainActivity.this);
+        mMovieAdapter = new MovieAdapter(MainActivity.this, MainActivity.this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
         // Set up ViewModel and Callback method
         mViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
         mViewModel.init(searchTerm);
-        mViewModel.getMovieData().observe(this, new Observer<List<Movie>>() {
+        mViewModel.getMovieData().observe(this, new Observer<MovieApiResource>() {
             @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                // update the movie data held by the adapter
-                Log.i(TAG, "Updating the adapter");
-                mMovieAdapter.setMoviesList(movies);
+            public void onChanged(@Nullable MovieApiResource movieResponse) {
+                // Handles different responses
+                if (movieResponse != null) {
+                    switch (movieResponse.getStatus()) {
+                        case SUCCESS:
+                            Log.i(TAG, "Updating the adapter");
+                            mMovieAdapter.setMoviesList(movieResponse.getData());
+                            break;
+                        case ERROR:
+                            // Inform the user that the network request failed
+                            Toast.makeText(MainActivity.this, getString(R.string.apiError),
+                                    Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "Error is " + movieResponse.getError().toString());
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         });
     }
@@ -82,67 +112,69 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.appbar, menu);
 
-        // Creates the spinner dropdown menu
+        // Creates the mSpinner dropdown menu
         MenuItem item = menu.findItem(R.id.action_dropdown);
-        this.spinner = (Spinner) item.getActionView();
+        this.mSpinner = (Spinner) item.getActionView();
 
-        spinner.setOnItemSelectedListener(this);
+        mSpinner.setOnItemSelectedListener(this);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.dropdown_array,
-                android.R.layout.simple_spinner_dropdown_item);
+        // Create the mSpinner's adapter
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.dropdown_array, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setAdapter(adapter);
+        mSpinner.setAdapter(adapter);
 
         // Check for saved selection
-        if (this.savedInstanceState != null) {
-            spinner.setSelection(this.savedInstanceState.getInt(SPINNER_KEY, 0));
-        } else {
-            Toast.makeText(this,"No Internet Connection Detected", Toast.LENGTH_LONG).show();
+        if (this.mBundle != null) {
+            mSpinner.setSelection(this.mBundle.getInt(BUNDLE_POSITION, 0));
         }
 
         return true;
-
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        String selectedItem = parent.getItemAtPosition(pos).toString();
-        Log.i(TAG, selectedItem);
-        String sortTerm = "";
-        if (selectedItem.equals("Most Popular")) {
-            sortTerm = MovieUtils.MOST_POPULAR;
-        } else {
-            sortTerm = MovieUtils.TOP_RATED;
+        // Get the search term based off the selected position
+        String sortTerm;
+        switch(pos) {
+            case 0:
+                sortTerm = MovieUtils.MOST_POPULAR;
+                break;
+            case 1:
+                sortTerm = MovieUtils.TOP_RATED;
+                break;
+            default:
+                sortTerm = MovieUtils.MOST_POPULAR;
         }
-
-        if (isConnected()) {
-            // Network is connected so preform background task
-            mViewModel.refreshData(sortTerm);
-        }
+        // refresh the data in the ViewModel
+        mViewModel.refreshData(sortTerm);
     }
 
+    /**
+     * This has to be implemented
+     * @param adapterView
+     */
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Do nothing
-        return;
-    }
+    public void onNothingSelected(AdapterView<?> adapterView) { }
 
 
     /**
-     * Checks wether the device is connected to a Network
-     * @return True if the device is connected, false otherwise
+     * Launches the detail activity to display information about a selected movie
+     * @param position the position of the selected movie in the adapter
      */
-    public boolean isConnected() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+    @Override
+    public void onClick(int position) {
+        Movie selectedMovie =  mMovieAdapter.getItemAtPosition(position);
+        Intent detailIntent = new Intent(MainActivity.this, MovieDetails.class);
+        detailIntent.putExtra("movie", selectedMovie);
+        startActivity(detailIntent);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.i(TAG,"Saving mSpinner selection");
+        outState.putInt(BUNDLE_POSITION, this.mSpinner.getSelectedItemPosition());
+        outState.putString(BUNDLE_VALUE, mSpinner.getSelectedItem().toString());
         super.onSaveInstanceState(outState);
-        outState.putInt(SPINNER_KEY, this.spinner.getSelectedItemPosition() );
     }
 }
