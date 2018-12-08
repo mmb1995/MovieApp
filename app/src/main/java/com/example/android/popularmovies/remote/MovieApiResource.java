@@ -3,35 +3,33 @@ package com.example.android.popularmovies.remote;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.android.popularmovies.model.Movie;
-
 import java.util.List;
 
 /**
- * A wrapper class for api responses that holds the status of the response, and the
+ * A generic wrapper class for api responses that holds the status of the response, and the
  * data returned by the response.
  */
-public class MovieApiResource {
-    private List<Movie> data;
+public class MovieApiResource<T> {
+    private List<T> data;
     private final Status status;
     private Throwable error;
 
-    private MovieApiResource(@Nullable List<Movie> data, @NonNull Status status,
+    private MovieApiResource(@Nullable List<T> data, @NonNull Status status,
                             @Nullable Throwable error) {
         this.data = data;
         this.status = status;
         this.error = error;
     }
 
-    public static MovieApiResource success(@NonNull List<Movie> data) {
-        return new MovieApiResource(data, Status.SUCCESS, null);
+    public static <T>MovieApiResource<T> success(@NonNull List<T> data) {
+        return new MovieApiResource<T>(data, Status.SUCCESS, null);
     }
 
-    public static MovieApiResource error(Throwable error) {
-        return new MovieApiResource(null, Status.ERROR, error);
+    public static <T>MovieApiResource<T> error(Throwable error) {
+        return new MovieApiResource<T>(null, Status.ERROR, error);
     }
 
-    public List<Movie> getData() {
+    public List<T> getData() {
         return data;
     }
 
@@ -39,7 +37,7 @@ public class MovieApiResource {
         return status;
     }
 
-    public void setData(List<Movie> data) {
+    public void setData(List<T> data) {
         this.data = data;
     }
 

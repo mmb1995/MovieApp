@@ -10,9 +10,10 @@
     </string-array>
 
     <!-- Error Messages -->
-    <string name="apiError">Failed to load movies, please check your internet connection.</string>
+    <string name="apiError">Failed to load data, please check your internet connection.</string>
 
 
-    <!-- Retrofit Resources -->
+    <!-- Movie Details-->
+    <string name="trailer_heading">Videos</string>
 
 </resources>
