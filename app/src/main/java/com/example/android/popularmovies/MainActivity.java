@@ -6,9 +6,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -29,7 +30,7 @@ import com.example.android.popularmovies.remote.MovieApiResource;
 // COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
-        RecyclerViewClickListener{
+        RecyclerViewClickListener, SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = "Main_Activity";
 
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner mSpinner;
     private Bundle mBundle;
     private MovieViewModel mViewModel;
+
+    // Insures spinner's onItemSelected method is not called when app is first created
+    Boolean isLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,19 +63,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Begin setting up ui
         setContentView(R.layout.activity_main);
         Log.i(TAG, searchTerm);
+        isLoading = true;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Sets up the GridLayoutManager for the RecyclerView
         RecyclerView mRecyclerView = findViewById(R.id.rvMoviePosters);
 
+        // Set the onRefreshListener to handle user swipe events
+        SwipeRefreshLayout mSwipeRefresh = findViewById(R.id.refresh);
+        mSwipeRefresh.setOnRefreshListener(this);
+
         // Checks the orientation to decide how to display the grid
         int orientation = getResources().getConfiguration().orientation;
-        GridLayoutManager mGridLayoutManager;
+        StaggeredGridLayoutManager mGridLayoutManager;
         if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mGridLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+            mGridLayoutManager = new StaggeredGridLayoutManager(2,
+                    StaggeredGridLayoutManager.VERTICAL);
         } else {
-            mGridLayoutManager = new GridLayoutManager(MainActivity.this, 3);
+            mGridLayoutManager = new StaggeredGridLayoutManager(3,
+                    StaggeredGridLayoutManager.VERTICAL);
         }
 
         // Set the layout manager
@@ -87,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mViewModel.getMovieData().observe(this, new Observer<MovieApiResource>() {
             @Override
             public void onChanged(@Nullable MovieApiResource movieResponse) {
+                mSwipeRefresh.setRefreshing(false);
                 // Handles different responses
                 if (movieResponse != null) {
                     switch (movieResponse.getStatus()) {
@@ -134,20 +146,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        // Get the search term based off the selected position
-        String sortTerm;
-        switch(pos) {
-            case 0:
-                sortTerm = MovieUtils.MOST_POPULAR;
-                break;
-            case 1:
-                sortTerm = MovieUtils.TOP_RATED;
-                break;
-            default:
-                sortTerm = MovieUtils.MOST_POPULAR;
+        // Makes sure data isn't redundentally refreshed
+        if (isLoading) {
+            isLoading = false;
+        } else {
+            Log.i(TAG, "Refreshing data on spinner selection");
+            refreshMovieData(pos);
         }
-        // refresh the data in the ViewModel
-        mViewModel.refreshData(sortTerm);
     }
 
     /**
@@ -170,6 +175,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(detailIntent);
     }
 
+    /**
+     * This is called when the user performs a vertical swipe on the list of movies.
+     */
+    @Override
+    public void onRefresh() {
+        Log.i(TAG, "Refreshing data on swipe");
+        refreshMovieData(mSpinner.getSelectedItemPosition());
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.i(TAG,"Saving mSpinner selection");
@@ -177,4 +191,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         outState.putString(BUNDLE_VALUE, mSpinner.getSelectedItem().toString());
         super.onSaveInstanceState(outState);
     }
+
+
+    /**
+     * Tells the ViewModel to refresh the data
+     * @param pos the selected position in the spinner
+     */
+    private void refreshMovieData(int pos) {
+        // Get the search term based off the selected position
+        String sortTerm;
+        switch(pos) {
+            case 0:
+                sortTerm = MovieUtils.MOST_POPULAR;
+                break;
+            case 1:
+                sortTerm = MovieUtils.TOP_RATED;
+                break;
+            default:
+                sortTerm = MovieUtils.MOST_POPULAR;
+        }
+        // refresh the data in the ViewModel
+        mViewModel.refreshData(sortTerm);
+    }
+
 }

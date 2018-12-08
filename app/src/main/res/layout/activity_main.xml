@@ -19,12 +19,18 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvMoviePosters"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/gridPadding"
-        android:scrollbars="vertical"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvMoviePosters"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/gridPadding"
+            android:scrollbars="vertical"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

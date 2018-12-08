@@ -18,9 +18,6 @@ public class MovieViewModel extends ViewModel {
     // Reference to the repository used to collect information through network requests
     private final MovieRepository mMovieRepository;
 
-    // Holds the sort term selected by the user
-    private String searchTerm;
-
     public MovieViewModel() {
         this.mMovieRepository = MovieRepository.getInstance();
     }
@@ -32,7 +29,6 @@ public class MovieViewModel extends ViewModel {
      */
     public MovieViewModel(MovieRepository repo, String term) {
         this.mMovieRepository = repo;
-        this.searchTerm = term;
         this.mMovieResource = new MutableLiveData<>();
     }
 
@@ -49,9 +45,8 @@ public class MovieViewModel extends ViewModel {
             return;
         }
         Log.i(TAG, "Init search value = " + searchTerm);
-        this.searchTerm = searchTerm;
         mMovieResource = new MutableLiveData<>();
-        loadMovieData();
+        loadMovieData(searchTerm);
     }
 
     // COMPLETED respond to spinner selections and get data to update after load data is called
@@ -63,15 +58,12 @@ public class MovieViewModel extends ViewModel {
     // updates the searchTerm when the user selects a new term from the spinner
     public void refreshData(String searchTerm) {
         Log.i(TAG, searchTerm);
-        if (!this.searchTerm.equals(searchTerm)) {
-            this.searchTerm = searchTerm;
-            loadMovieData();
-        }
+        loadMovieData(searchTerm);
     }
 
     // Calls the repository and passes it the term that will be used to query theMovieDB
-    private void loadMovieData() {
+    private void loadMovieData(String searchTerm) {
         //Log.i(TAG, "getting Movie data from repo");
-        mMovieRepository.getMovies(this.mMovieResource, this.searchTerm);
+        mMovieRepository.getMovies(this.mMovieResource, searchTerm);
     }
 }
