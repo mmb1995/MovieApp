@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.model.MovieResponse;
+import com.example.android.popularmovies.model.MovieTrailerResponse;
 
 import java.util.Objects;
 
@@ -58,7 +59,6 @@ public class MovieRepository {
      * @param searchTerm a search term to query theMovieDb by different categories
      */
     public void getMovies(final MutableLiveData<MovieApiResource> data, String searchTerm) {
-
         // Calls the service to make a request to theMovieDB
         mMovieApiService.getMovies(searchTerm, MovieUtils.API_KEY).enqueue(new Callback<MovieResponse>() {
             @Override
@@ -78,8 +78,27 @@ public class MovieRepository {
                 data.setValue(MovieApiResource.error(t));
             }
         });
-
-
         // COMPLETED add Retrofit logic to query theMovieDB
+    }
+
+
+    public void getTrailers(final MutableLiveData<MovieApiResource> data, int id) {
+        // calls the service to get the trailers associated with the given id
+        mMovieApiService.getTrailers(id, MovieUtils.API_KEY).enqueue(new Callback<MovieTrailerResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MovieTrailerResponse> call, @NonNull Response<MovieTrailerResponse> response) {
+                Log.i(TAG,"Trailer response: " + response.toString());
+                if (response.isSuccessful()) {
+                    data.setValue(MovieApiResource.success(Objects.requireNonNull(response.body()).getTrailers()));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MovieTrailerResponse> call, @NonNull Throwable t) {
+                call.cancel();
+                t.printStackTrace();
+                data.setValue(MovieApiResource.error(t));
+            }
+        });
     }
 }
