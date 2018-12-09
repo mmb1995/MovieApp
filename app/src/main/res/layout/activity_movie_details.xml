@@ -76,31 +76,19 @@
             android:elevation="-2dp"
             android:background="@color/colorPrimary"/>
 
-        <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/defaultPadding"/>
-
-        <TextView
-            style="@style/movieTextStyle"
-            android:layout_width="wrap_content"
+        <android.support.design.widget.TabLayout
+            android:id="@+id/movieDetailsTabLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/defaultMargin"
-            android:textSize="20sp"
-            android:text="@string/trailer_heading"/>
+            app:tabGravity="fill"
+            app:tabMode="fixed"/>
 
-        <!-- Adds visual separation between Views -->
-        <View
-            android:layout_marginBottom="@dimen/defaultMargin"
-            android:layout_width="match_parent"
-            android:layout_height=".1dp"
-            android:background="#dadadada"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/trailerRecyclerView"
+        <FrameLayout
+            android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/defaultMargin"/>
+            android:layout_marginHorizontal="@dimen/defaultMargin"/>
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

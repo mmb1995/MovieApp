@@ -14,6 +14,10 @@
 
 
     <!-- Movie Details-->
-    <string name="trailer_heading">Videos</string>
+    <string name="trailer_tab">Videos</string>
+    <string name="reviews_tab">User Reviews</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
