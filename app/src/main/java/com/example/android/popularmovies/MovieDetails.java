@@ -2,16 +2,14 @@ package com.example.android.popularmovies;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
-import com.example.android.popularmovies.fragment.TrailerFragment;
+import com.example.android.popularmovies.adapter.MovieDetailsPageAdapter;
 import com.example.android.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -29,10 +27,11 @@ public class MovieDetails extends AppCompatActivity {
     @BindView(R.id.ratingTextView) TextView mRatingView;
     @BindView(R.id.summaryTextView) TextView mSummaryView;
     @BindView(R.id.detailPosterImageView) ImageView mPosterImageView;
-    @BindView(R.id.fragment_container) FrameLayout mFragmentContainer;
+    @BindView(R.id.view_pager) ViewPager mViewPager;
     @BindView(R.id.movieDetailsTabLayout) TabLayout mTabLayout;
 
     private int mMovieId;
+    private MovieDetailsPageAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +41,6 @@ public class MovieDetails extends AppCompatActivity {
 
         // Get the data passed in by the starting intent
         Movie movie = (Movie) getIntent().getParcelableExtra("movie");
-
-        // Set up tab layout
-        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.trailer_tab)));
-        mTabLayout.addTab(mTabLayout.newTab().setText(getString(R.string.reviews_tab)));
 
         // load the movie data into the ui
         if (movie != null) {
@@ -67,53 +62,17 @@ public class MovieDetails extends AppCompatActivity {
             mReleaseDateView.setText(movie.getReleaseDate());
             mRatingView.setText(movie.getVoteAverage().toString());
             mSummaryView.setText(movie.getOverview());
-            setupTabLayout();
+
+            // Set up ViewPager and connect it to the TabLayout
+            mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovieId, this);
+            mViewPager.setAdapter(mAdapter);
+            mTabLayout.setupWithViewPager(mViewPager);
+            //mViewPager.setCurrentItem(0);
         } else {
             // End activity if movie data is unavailable
             finish();
         }
     }
 
-    private void setupTabLayout() {
-        mTabLayout.addOnTabSelectedListener( new TabLayout.OnTabSelectedListener() {
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0:
-                        Bundle trailerBundle = new Bundle();
-                        trailerBundle.putInt(BUNDLE_ID, mMovieId);
-                        TrailerFragment trailerFrag = new TrailerFragment();
-                        trailerFrag.setArguments(trailerBundle);
-                        updateFragments(trailerFrag);
-                    case 1:
-                        //TODO add review fragment
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-        // TODO: remove this and add viewpager
-        TabLayout.Tab tab = mTabLayout.getTabAt(0);
-        tab.select();
-    }
-
-    private void updateFragments(Fragment fragment) {
-        FragmentManager fragManager = getSupportFragmentManager();
-        fragManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
-    }
 
 }

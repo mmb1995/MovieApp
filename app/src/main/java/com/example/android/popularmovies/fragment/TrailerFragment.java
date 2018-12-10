@@ -46,6 +46,7 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mMovieId = getArguments().getInt(ID_KEY);
+            Log.i(TAG, "movieId = " + mMovieId);
             mTrailerViewModel = ViewModelProviders.of(getActivity()).get(MovieDetailsViewModel.class);
             mTrailerViewModel.init(mMovieId);
         }
@@ -59,14 +60,16 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
         View rootView = inflater.inflate(R.layout.fragment_trailer, container, false);
         ButterKnife.bind(this, rootView);
 
+        // Set up RecyclerView and ViewModel
         mTrailerRecyclerView.setLayoutManager( new LinearLayoutManager(getActivity()));
+        mTrailerAdapter = new MovieTrailerAdapter(getActivity(), this);
+        mTrailerRecyclerView.setAdapter(mTrailerAdapter);
         mTrailerViewModel.getMovieTrailers().observe(this, movieTrailerResource -> {
             if (movieTrailerResource != null) {
                 switch (movieTrailerResource.getStatus()) {
                     case SUCCESS:
-                        mTrailerAdapter = new MovieTrailerAdapter(getActivity(),
-                                movieTrailerResource.getData(), this);
-                        mTrailerRecyclerView.setAdapter(mTrailerAdapter);
+                        Log.i(TAG, "data = " + movieTrailerResource.getData().toString());
+                        mTrailerAdapter.setMoviesList(movieTrailerResource.getData());
                         break;
                     case ERROR:
                         Toast.makeText(getContext(), getString(R.string.apiError),

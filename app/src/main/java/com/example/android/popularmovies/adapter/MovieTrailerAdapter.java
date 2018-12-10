@@ -20,10 +20,9 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
     private List<MovieTrailer> movieTrailerList;
     private final RecyclerViewClickListener mListener;
 
-    public MovieTrailerAdapter(Context context, List<MovieTrailer> trailerList, RecyclerViewClickListener listener) {
+    public MovieTrailerAdapter(Context context, RecyclerViewClickListener listener) {
         this.mContext = context;
         this.mListener = listener;
-        this.movieTrailerList = trailerList;
     }
 
     @NonNull

@@ -1,94 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:fillViewport="true">
+    android:layout_width="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <android.support.v4.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".MovieDetails" >
-
-        <ImageView
-            android:id="@+id/detailPosterImageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:layout_marginTop="@dimen/defaultMargin"
-            android:elevation="-2dp"
-            android:contentDescription="@null" />
-
-        <TextView
-            style="@style/movieTextStyle"
-            android:id="@+id/titleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height= "wrap_content"
-            android:layout_margin="@dimen/defaultMargin"
-            android:textSize="30sp" />
+        android:layout_width="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/defaultMargin"
-            android:orientation="horizontal" >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".MovieDetails" >
+
+            <ImageView
+                android:id="@+id/detailPosterImageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:layout_marginTop="@dimen/defaultMargin"
+                android:elevation="-2dp"
+                android:contentDescription="@null" />
 
             <TextView
                 style="@style/movieTextStyle"
-                android:id="@+id/dateTextView"
+                android:id="@+id/titleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height= "wrap_content"
+                android:layout_margin="@dimen/defaultMargin"
+                android:textSize="30sp" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/defaultMargin"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/movieTextStyle"
+                    android:id="@+id/dateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"/>
+                <TextView
+                    style="@style/movieTextStyle"
+                    android:id="@+id/ratingTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/defaultMargin"
+                    android:textSize="15sp"
+                    android:layout_marginStart="@dimen/defaultMargin" />
+
+            </LinearLayout>
+
+            <!-- Adds visual separation between Views -->
+            <View
+                android:layout_marginTop="@dimen/defaultMargin"
+                android:layout_width="match_parent"
+                android:layout_height=".1dp"
+                android:background="#dadadada"/>
+
+            <TextView
+                style="@style/movieTextStyle"
+                android:id="@+id/summaryTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/defaultMargin"
                 android:textSize="15sp"/>
-            <TextView
-                style="@style/movieTextStyle"
-                android:id="@+id/ratingTextView"
-                android:layout_width="wrap_content"
+
+            <!-- Adds visual separation between Views -->
+            <View
+                android:layout_marginTop="@dimen/defaultMargin"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:elevation="-2dp"
+                android:background="@color/colorPrimary"/>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/movieDetailsTabLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/defaultMargin"
-                android:textSize="15sp"
-                android:layout_marginStart="@dimen/defaultMargin" />
+                android:layout_margin="@dimen/defaultMargin"
+                app:tabMode="fixed"/>
 
+            <android.support.v4.view.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:visibility="visible"/>
+
+            <!--Todo fix conflict between ViewPager and NestedScrollView-->
         </LinearLayout>
-
-        <!-- Adds visual separation between Views -->
-        <View
-            android:layout_marginTop="@dimen/defaultMargin"
-            android:layout_width="match_parent"
-            android:layout_height=".1dp"
-            android:background="#dadadada"/>
-
-        <TextView
-            style="@style/movieTextStyle"
-            android:id="@+id/summaryTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/defaultMargin"
-            android:textSize="15sp"/>
-
-        <!-- Adds visual separation between Views -->
-        <View
-            android:layout_marginTop="@dimen/defaultMargin"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:elevation="-2dp"
-            android:background="@color/colorPrimary"/>
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/movieDetailsTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/defaultMargin"
-            app:tabGravity="fill"
-            app:tabMode="fixed"/>
-
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/defaultMargin"/>
-
-    </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>
