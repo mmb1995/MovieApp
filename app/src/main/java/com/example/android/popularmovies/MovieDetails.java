@@ -2,7 +2,6 @@ package com.example.android.popularmovies;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.adapter.MovieDetailsPageAdapter;
 import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.views.CustomViewPager;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -27,7 +27,8 @@ public class MovieDetails extends AppCompatActivity {
     @BindView(R.id.ratingTextView) TextView mRatingView;
     @BindView(R.id.summaryTextView) TextView mSummaryView;
     @BindView(R.id.detailPosterImageView) ImageView mPosterImageView;
-    @BindView(R.id.view_pager) ViewPager mViewPager;
+    @BindView(R.id.view_pager)
+    CustomViewPager mViewPager;
     @BindView(R.id.movieDetailsTabLayout) TabLayout mTabLayout;
 
     private int mMovieId;

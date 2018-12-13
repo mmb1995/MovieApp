@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -48,7 +49,7 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
             mMovieId = getArguments().getInt(ID_KEY);
             Log.i(TAG, "movieId = " + mMovieId);
             mTrailerViewModel = ViewModelProviders.of(getActivity()).get(MovieDetailsViewModel.class);
-            mTrailerViewModel.init(mMovieId);
+            mTrailerViewModel.initTrailers(mMovieId);
         }
 
     }
@@ -64,6 +65,7 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
         mTrailerRecyclerView.setLayoutManager( new LinearLayoutManager(getActivity()));
         mTrailerAdapter = new MovieTrailerAdapter(getActivity(), this);
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
+        ViewCompat.setNestedScrollingEnabled(mTrailerRecyclerView, false);
         mTrailerViewModel.getMovieTrailers().observe(this, movieTrailerResource -> {
             if (movieTrailerResource != null) {
                 switch (movieTrailerResource.getStatus()) {

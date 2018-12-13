@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.fragment.ReviewFragment;
 import com.example.android.popularmovies.fragment.TrailerFragment;
 
 public class MovieDetailsPageAdapter extends FragmentPagerAdapter {
@@ -33,12 +34,14 @@ public class MovieDetailsPageAdapter extends FragmentPagerAdapter {
                 fragment = new TrailerFragment();
                 break;
             case 1:
-                fragment = new TrailerFragment();
+                fragment = new ReviewFragment();
                 break;
             default:
-                fragment = new TrailerFragment();
+                fragment = null;
         }
-        fragment.setArguments(mBundle);
+        if (fragment != null) {
+            fragment.setArguments(mBundle);
+        }
         return fragment;
     }
 
