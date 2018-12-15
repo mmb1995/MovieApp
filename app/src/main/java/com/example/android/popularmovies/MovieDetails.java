@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.adapter.MovieDetailsPageAdapter;
@@ -27,6 +30,8 @@ public class MovieDetails extends AppCompatActivity {
     @BindView(R.id.ratingTextView) TextView mRatingView;
     @BindView(R.id.summaryTextView) TextView mSummaryView;
     @BindView(R.id.detailPosterImageView) ImageView mPosterImageView;
+    @BindView(R.id.favorites_button)
+    Button mFavoritesButton;
     @BindView(R.id.view_pager)
     CustomViewPager mViewPager;
     @BindView(R.id.movieDetailsTabLayout) TabLayout mTabLayout;
@@ -64,11 +69,19 @@ public class MovieDetails extends AppCompatActivity {
             mRatingView.setText(movie.getVoteAverage().toString());
             mSummaryView.setText(movie.getOverview());
 
+            // Set up button
+            mFavoritesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(MovieDetails.this, "Movie added to favorites",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
             // Set up ViewPager and connect it to the TabLayout
             mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovieId, this);
             mViewPager.setAdapter(mAdapter);
             mTabLayout.setupWithViewPager(mViewPager);
-            //mViewPager.setCurrentItem(0);
         } else {
             // End activity if movie data is unavailable
             finish();
