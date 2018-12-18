@@ -10,7 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-interface MovieApiService {
+public interface MovieApiService {
 
     @GET("movie/{search_term}")
     Call<MovieResponse> getMovies(@Path("search_term") String searchTerm,

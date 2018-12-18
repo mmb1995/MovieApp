@@ -5,8 +5,11 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.remote.MovieApiResource;
 import com.example.android.popularmovies.remote.MovieRepository;
+
+import javax.inject.Inject;
 
 public class MovieDetailsViewModel extends ViewModel {
     private static final String TAG = "MovieDetailsViewModel";
@@ -20,8 +23,10 @@ public class MovieDetailsViewModel extends ViewModel {
     // Reference to the repository used to collect information through network request
     private final MovieRepository mMovieRepository;
 
-    public MovieDetailsViewModel() {
-        this.mMovieRepository = MovieRepository.getInstance();
+    // Instructs Dagger 2 to provide the MovieRepository parameter
+    @Inject
+    public MovieDetailsViewModel(MovieRepository movieRepo) {
+        this.mMovieRepository = movieRepo;
     }
 
     /**
@@ -74,6 +79,10 @@ public class MovieDetailsViewModel extends ViewModel {
      */
     private void loadMovieReviews(int movieId) {
         mMovieRepository.getReviews(this.mMovieReviewsList, movieId);
+    }
+
+    public void addFavorite(Movie movie) {
+        mMovieRepository.addMovie(movie);
     }
 
 }

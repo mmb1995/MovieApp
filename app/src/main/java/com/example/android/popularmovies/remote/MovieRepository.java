@@ -1,57 +1,50 @@
 package com.example.android.popularmovies.remote;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
+import com.example.android.popularmovies.database.MovieDao;
+import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.model.MovieResponse;
 import com.example.android.popularmovies.model.MovieReviewResponse;
 import com.example.android.popularmovies.model.MovieTrailerResponse;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
-import okhttp3.OkHttpClient;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * This class performs network requests on a background thread, and is the
  * single source of truth for fetching data
  */
+@Singleton
 public class MovieRepository {
 
     private static final String TAG = "MovieRepository";
 
-
     private final MovieApiService mMovieApiService;
+    private final MovieDao mMovieDao;
+    private final Executor executor;
 
     // For singleton purposes
     private static MovieRepository mInstance;
 
     // This is only called if this class has not previously been instantiated
-    private MovieRepository(MovieApiService service) {
+    @Inject
+    public MovieRepository(MovieApiService service, MovieDao movieDao, Executor executor) {
         this.mMovieApiService = service;
-    }
-
-    // Singleton constructor to ensure only one instance of MovieRepository is created
-    public static MovieRepository getInstance() {
-        if (mInstance == null) {
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            OkHttpClient okHttpClient = builder.build();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(MovieUtils.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(okHttpClient)
-                    .build();
-            MovieApiService apiService = retrofit.create(MovieApiService.class);
-            mInstance = new MovieRepository(apiService);
-        }
-        return mInstance;
+        this.mMovieDao = movieDao;
+        this.executor = executor;
     }
 
     /**
@@ -122,4 +115,21 @@ public class MovieRepository {
             }
         });
     }
+
+    /**
+     * Adds given movie to the database
+     * @param movie
+     */
+    public void addMovie(final Movie movie) {
+        // Runs in background thread
+        Log.i(TAG, "Adding favorite to database");
+        executor.execute(() -> {
+            mMovieDao.addMovie(movie);
+        });
+    }
+
+    public LiveData<List<Movie>> getFavorites() {
+       return mMovieDao.getFavoriteMovies();
+    }
+
 }

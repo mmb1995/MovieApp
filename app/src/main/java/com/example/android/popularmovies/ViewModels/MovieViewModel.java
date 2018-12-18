@@ -5,8 +5,13 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.remote.MovieApiResource;
 import com.example.android.popularmovies.remote.MovieRepository;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 public class MovieViewModel extends ViewModel {
 
@@ -18,8 +23,13 @@ public class MovieViewModel extends ViewModel {
     // Reference to the repository used to collect information through network requests
     private final MovieRepository mMovieRepository;
 
-    public MovieViewModel() {
-        this.mMovieRepository = MovieRepository.getInstance();
+    // Holds favorite movies
+    private LiveData<List<Movie>> mFavoritesList;
+
+    // Tells dagger 2 to inject the MovieRepository parameter
+    @Inject
+    public MovieViewModel(MovieRepository movieRepository) {
+        this.mMovieRepository = movieRepository;
     }
 
     /**
@@ -65,5 +75,13 @@ public class MovieViewModel extends ViewModel {
     private void loadMovieData(String searchTerm) {
         //Log.i(TAG, "getting Movie data from repo");
         mMovieRepository.getMovies(this.mMovieResource, searchTerm);
+    }
+
+    public LiveData<List<Movie>> getFavoriteMovies() {
+        Log.i(TAG, "Getting favorite movies");
+        if (mFavoritesList == null) {
+            mFavoritesList = mMovieRepository.getFavorites();
+        }
+        return this.mFavoritesList;
     }
 }

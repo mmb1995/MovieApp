@@ -7,6 +7,7 @@
     <string-array name="dropdown_array">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Favorites</item>
     </string-array>
 
     <!-- Error Messages -->

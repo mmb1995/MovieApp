@@ -21,11 +21,16 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
+import com.example.android.popularmovies.ViewModels.FactoryViewModel;
 import com.example.android.popularmovies.ViewModels.MovieViewModel;
 import com.example.android.popularmovies.adapter.MovieAdapter;
 import com.example.android.popularmovies.adapter.RecyclerViewClickListener;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.remote.MovieApiResource;
+
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 
 // COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
 
@@ -41,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private MovieAdapter mMovieAdapter;
     private Spinner mSpinner;
     private Bundle mBundle;
+    private SwipeRefreshLayout mSwipeRefresh;
+
+    @Inject
+    public FactoryViewModel mFactoryViewModel;
     private MovieViewModel mViewModel;
 
     // Insures spinner's onItemSelected method is not called when app is first created
@@ -49,6 +58,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        isLoading = true;
+
+        // Dagger
+        AndroidInjection.inject(this);
 
         // Check if any data was passed into the activity from a previous state
         String searchTerm;
@@ -59,11 +73,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else {
             searchTerm = MovieUtils.MOST_POPULAR;
         }
-
-        // Begin setting up ui
-        setContentView(R.layout.activity_main);
         Log.i(TAG, searchTerm);
-        isLoading = true;
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -71,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         RecyclerView mRecyclerView = findViewById(R.id.rvMoviePosters);
 
         // Set the onRefreshListener to handle user swipe events
-        SwipeRefreshLayout mSwipeRefresh = findViewById(R.id.refresh);
+        mSwipeRefresh = findViewById(R.id.refresh);
         mSwipeRefresh.setOnRefreshListener(this);
 
         // Checks the orientation to decide how to display the grid
@@ -91,33 +102,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Sets up the adapter for the RecyclerView
         mMovieAdapter = new MovieAdapter(MainActivity.this, MainActivity.this);
         mRecyclerView.setAdapter(mMovieAdapter);
-
-        // Set up ViewModel and Callback method
-        mViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
-        mViewModel.init(searchTerm);
-        mViewModel.getMovieData().observe(this, new Observer<MovieApiResource>() {
-            @Override
-            public void onChanged(@Nullable MovieApiResource movieResponse) {
-                mSwipeRefresh.setRefreshing(false);
-                // Handles different responses
-                if (movieResponse != null) {
-                    switch (movieResponse.getStatus()) {
-                        case SUCCESS:
-                            Log.i(TAG, "Updating the adapter");
-                            mMovieAdapter.setMoviesList(movieResponse.getData());
-                            break;
-                        case ERROR:
-                            // Inform the user that the network request failed
-                            Toast.makeText(MainActivity.this, getString(R.string.apiError),
-                                    Toast.LENGTH_LONG).show();
-                            Log.e(TAG, "Error is " + movieResponse.getError().toString());
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        });
+        mViewModel = ViewModelProviders.of(this, mFactoryViewModel).get(MovieViewModel.class);
+        configureViewModel(searchTerm);
     }
 
     @Override
@@ -192,6 +178,38 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onSaveInstanceState(outState);
     }
 
+    private void configureViewModel(String searchTerm) {
+        // Set up ViewModel and Callback method
+        if (searchTerm != MovieUtils.FAVORITES) {
+            mViewModel.init(searchTerm);
+            mViewModel.getMovieData().observe(this, new Observer<MovieApiResource>() {
+                @Override
+                public void onChanged(@Nullable MovieApiResource movieResponse) {
+                    mSwipeRefresh.setRefreshing(false);
+                    // Handles different responses
+                    if (movieResponse != null) {
+                        switch (movieResponse.getStatus()) {
+                            case SUCCESS:
+                                Log.i(TAG, "Updating the adapter");
+                                mMovieAdapter.setMoviesList(movieResponse.getData());
+                                break;
+                            case ERROR:
+                                // Inform the user that the network request failed
+                                Toast.makeText(MainActivity.this, getString(R.string.apiError),
+                                        Toast.LENGTH_LONG).show();
+                                Log.e(TAG, "Error is " + movieResponse.getError().toString());
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            });
+        } else {
+            getFavorites();
+        }
+    }
+
 
     /**
      * Tells the ViewModel to refresh the data
@@ -199,19 +217,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      */
     private void refreshMovieData(int pos) {
         // Get the search term based off the selected position
-        String sortTerm;
         switch(pos) {
             case 0:
-                sortTerm = MovieUtils.MOST_POPULAR;
+                mViewModel.refreshData(MovieUtils.MOST_POPULAR);
                 break;
             case 1:
-                sortTerm = MovieUtils.TOP_RATED;
+                mViewModel.refreshData(MovieUtils.TOP_RATED);
+                break;
+            case 2:
+                getFavorites();
                 break;
             default:
-                sortTerm = MovieUtils.MOST_POPULAR;
+                mViewModel.refreshData(MovieUtils.MOST_POPULAR);
         }
-        // refresh the data in the ViewModel
-        mViewModel.refreshData(sortTerm);
+;
+    }
+
+    private void getFavorites() {
+        mViewModel.getFavoriteMovies().observe(this, favoritesList -> {
+            mSwipeRefresh.setRefreshing(false);
+            if (favoritesList != null) {
+                mMovieAdapter.setMoviesList(favoritesList);
+            } else {
+                Toast.makeText(this, "Please pick some of your favorite movies!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

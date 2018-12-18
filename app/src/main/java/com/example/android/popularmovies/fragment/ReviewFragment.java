@@ -3,6 +3,7 @@ package com.example.android.popularmovies.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,14 +12,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.ViewModels.FactoryViewModel;
 import com.example.android.popularmovies.ViewModels.MovieDetailsViewModel;
 import com.example.android.popularmovies.adapter.MovieReviewAdapter;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.AndroidSupportInjection;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,23 +36,13 @@ public class ReviewFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private int mMovieId;
+    @Inject
+    public FactoryViewModel mFactoryViewModel;
     private MovieDetailsViewModel mReviewViewModel;
     private MovieReviewAdapter mReviewAdapter;
 
     public ReviewFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mMovieId = getArguments().getInt(ID_KEY);
-            Log.i(TAG, "movieId = " + mMovieId);
-            mReviewViewModel = ViewModelProviders.of(getActivity()).get(MovieDetailsViewModel.class);
-            mReviewViewModel.initReviews(mMovieId);
-        }
-
     }
 
     @Override
@@ -63,22 +57,44 @@ public class ReviewFragment extends Fragment {
         mReviewAdapter = new MovieReviewAdapter(getActivity());
         mReviewRecyclerview.setAdapter(mReviewAdapter);
         ViewCompat.setNestedScrollingEnabled(mReviewRecyclerview, false);
+        return rootView;
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        this.configureDagger();
+        this.setUpReviews();
+    }
+
+    private void configureDagger() {
+        AndroidSupportInjection.inject(this);
+    }
+
+    private void setUpReviews() {
+        this.mMovieId = getArguments().getInt(ID_KEY);
+        Log.i(TAG, "movieId = " + mMovieId);
+        mReviewViewModel = ViewModelProviders.of(getActivity(),mFactoryViewModel ).get(MovieDetailsViewModel.class);
+        mReviewViewModel.initReviews(mMovieId);
+
+        // Set up observer and callback
         mReviewViewModel.getMovieReviews().observe(this, movieReviewResource -> {
             if (movieReviewResource != null) {
                 switch (movieReviewResource.getStatus()) {
                     case SUCCESS:
-                        Log.i(TAG, "data = " + movieReviewResource.getData().toString());
                         mReviewAdapter.setMoviesReviews(movieReviewResource.getData());
                         break;
                     case ERROR:
-                        Toast.makeText(getContext(), getString(R.string.apiError),
-                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case LOADING:
                         break;
                     default:
                         break;
                 }
             }
         });
-        return rootView;
     }
 }
+
+
