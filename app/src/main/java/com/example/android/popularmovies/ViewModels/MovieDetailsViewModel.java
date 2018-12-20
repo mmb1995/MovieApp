@@ -6,8 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
 import com.example.android.popularmovies.model.Movie;
-import com.example.android.popularmovies.remote.MovieApiResource;
 import com.example.android.popularmovies.remote.MovieRepository;
+import com.example.android.popularmovies.remote.MovieResource;
 
 import javax.inject.Inject;
 
@@ -15,10 +15,10 @@ public class MovieDetailsViewModel extends ViewModel {
     private static final String TAG = "MovieDetailsViewModel";
 
     // Holds movie trailer data returned by the repo
-    private MutableLiveData<MovieApiResource> mMovieTrailersList;
+    private MutableLiveData<MovieResource> mMovieTrailersList;
 
     // hold movie review data returned by the repo
-    private MutableLiveData<MovieApiResource> mMovieReviewsList;
+    private MutableLiveData<MovieResource> mMovieReviewsList;
 
     // Reference to the repository used to collect information through network request
     private final MovieRepository mMovieRepository;
@@ -55,7 +55,7 @@ public class MovieDetailsViewModel extends ViewModel {
      * Returns the MovieApiResource that contains the trailer data returned from the repo
      * @return
      */
-    public LiveData<MovieApiResource> getMovieTrailers() {
+    public LiveData<MovieResource> getMovieTrailers() {
         return mMovieTrailersList;
     }
 
@@ -63,7 +63,7 @@ public class MovieDetailsViewModel extends ViewModel {
      * Returns the MovieApiResource that contains the user reviews returned from the repo
      * @return
      */
-    public LiveData<MovieApiResource> getMovieReviews() {return mMovieReviewsList;}
+    public LiveData<MovieResource> getMovieReviews() {return mMovieReviewsList;}
 
     /**
      * Calls the repo to fetch the movie trailers associated with the given movieId

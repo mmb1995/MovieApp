@@ -1,8 +1,11 @@
 package com.example.android.popularmovies.remote;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
@@ -49,17 +52,20 @@ public class MovieRepository {
 
     /**
      * Performs network request to fetch a list of movies from theMovieDb
-     * @param data LiveData object that holds the list of movies returned from the request
      * @param searchTerm a search term to query theMovieDb by different categories
      */
-    public void getMovies(final MutableLiveData<MovieApiResource> data, String searchTerm) {
+    public LiveData<MovieResource> getMovies(String searchTerm) {
         // Calls the service to make a request to theMovieDB
+        if (searchTerm.equals(MovieUtils.FAVORITES)) {
+            return getFavorites();
+        }
+        final MutableLiveData<MovieResource> data = new MutableLiveData<>();
         mMovieApiService.getMovies(searchTerm, MovieUtils.API_KEY).enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
                 Log.i(TAG, response.toString());
                 if (response.isSuccessful()) {
-                    data.setValue(MovieApiResource.success(Objects.requireNonNull(response.body()).getMovies()));
+                    data.setValue(MovieResource.success(Objects.requireNonNull(response.body()).getMovies()));
                 } else {
                     // the response did not return valid data
                     onFailure(call, new Throwable("api key likely missing"));
@@ -69,21 +75,21 @@ public class MovieRepository {
             @Override
             public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
                 call.cancel();
-                data.setValue(MovieApiResource.error(t));
+                data.setValue(MovieResource.error(t));
             }
         });
-        // COMPLETED add Retrofit logic to query theMovieDB
+        return data;
     }
 
 
-    public void getTrailers(final MutableLiveData<MovieApiResource> data, int id) {
+    public void getTrailers(final MutableLiveData<MovieResource> data, int id) {
         // calls the service to get the trailers associated with the given id
         mMovieApiService.getTrailers(id, MovieUtils.API_KEY).enqueue(new Callback<MovieTrailerResponse>() {
             @Override
             public void onResponse(@NonNull Call<MovieTrailerResponse> call, @NonNull Response<MovieTrailerResponse> response) {
                 Log.i(TAG,"Trailer response: " + response.toString());
                 if (response.isSuccessful()) {
-                    data.setValue(MovieApiResource.success(Objects.requireNonNull(response.body()).getTrailers()));
+                    data.setValue(MovieResource.success(Objects.requireNonNull(response.body()).getTrailers()));
                 }
             }
 
@@ -91,19 +97,19 @@ public class MovieRepository {
             public void onFailure(@NonNull Call<MovieTrailerResponse> call, @NonNull Throwable t) {
                 call.cancel();
                 t.printStackTrace();
-                data.setValue(MovieApiResource.error(t));
+                data.setValue(MovieResource.error(t));
             }
         });
     }
 
-    public void getReviews(final MutableLiveData<MovieApiResource> data, int id) {
+    public void getReviews(final MutableLiveData<MovieResource> data, int id) {
         // calls the service to get the user reviews associated with the given movie id
         mMovieApiService.getReviews(id, MovieUtils.API_KEY).enqueue(new Callback<MovieReviewResponse>() {
             @Override
             public void onResponse(@NonNull Call<MovieReviewResponse> call, @NonNull Response<MovieReviewResponse> response) {
                 Log.i(TAG,"Review response: " + response.toString());
                 if (response.isSuccessful()) {
-                    data.setValue(MovieApiResource.success(Objects.requireNonNull(response.body()).getTrailers()));
+                    data.setValue(MovieResource.success(Objects.requireNonNull(response.body()).getTrailers()));
                 }
             }
 
@@ -111,7 +117,7 @@ public class MovieRepository {
             public void onFailure(@NonNull Call<MovieReviewResponse> call, @NonNull Throwable t) {
                 call.cancel();
                 t.printStackTrace();
-                data.setValue(MovieApiResource.error(t));
+                data.setValue(MovieResource.error(t));
             }
         });
     }
@@ -128,8 +134,21 @@ public class MovieRepository {
         });
     }
 
-    public LiveData<List<Movie>> getFavorites() {
-       return mMovieDao.getFavoriteMovies();
+    private LiveData<MovieResource> getFavorites() {
+        // Gets the data from the database
+        final LiveData<List<Movie>> source = mMovieDao.getFavoriteMovies();
+
+        // mediator will observe the changes when notified by room
+        final MediatorLiveData mediator = new MediatorLiveData();
+        mediator.addSource(source, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> favoriteMovies) {
+                Log.d(TAG, "Recieved data from database");
+                MovieResource resource = MovieResource.success(favoriteMovies);
+                mediator.setValue(resource);
+            }
+        });
+        return mediator;
     }
 
 }
