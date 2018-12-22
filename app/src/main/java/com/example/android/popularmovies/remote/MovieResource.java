@@ -21,6 +21,7 @@ public class MovieResource<T> {
         this.error = error;
     }
 
+
     public static <T>MovieResource<T> success(@NonNull List<T> data) {
         return new MovieResource<T>(data, Status.SUCCESS, null);
     }

@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
 import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.remote.MovieDetailsResource;
 import com.example.android.popularmovies.remote.MovieRepository;
 import com.example.android.popularmovies.remote.MovieResource;
 
@@ -14,11 +15,14 @@ import javax.inject.Inject;
 public class MovieDetailsViewModel extends ViewModel {
     private static final String TAG = "MovieDetailsViewModel";
 
+    private LiveData<MovieDetailsResource> movie;
+
     // Holds movie trailer data returned by the repo
     private MutableLiveData<MovieResource> mMovieTrailersList;
 
     // hold movie review data returned by the repo
     private MutableLiveData<MovieResource> mMovieReviewsList;
+
 
     // Reference to the repository used to collect information through network request
     private final MovieRepository mMovieRepository;
@@ -27,6 +31,17 @@ public class MovieDetailsViewModel extends ViewModel {
     @Inject
     public MovieDetailsViewModel(MovieRepository movieRepo) {
         this.mMovieRepository = movieRepo;
+    }
+
+    public void init(int movieId) {
+        if (this.movie != null) {
+            return;
+        }
+        movie = mMovieRepository.getMovieById(movieId);
+    }
+
+    public LiveData<MovieDetailsResource> getMovie() {
+        return this.movie;
     }
 
     /**

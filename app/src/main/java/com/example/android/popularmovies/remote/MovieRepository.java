@@ -158,4 +158,33 @@ public class MovieRepository {
         return mediator;
     }
 
+    public LiveData<MovieDetailsResource> getMovieById(int movieId) {
+        final MutableLiveData<MovieDetailsResource> data = new MutableLiveData<>();
+
+        //Check to see if the movie is in the database
+        executor.execute(() -> {
+            Movie movie = mMovieDao.getMovieById(movieId);
+            if (movie != null) {
+                MovieDetailsResource resource = MovieDetailsResource.success(movie);
+                data.postValue(resource);
+            } else {
+                mMovieApiService.getMovieById(movieId, MovieUtils.API_KEY).enqueue(new Callback<Movie>() {
+                    @Override
+                    public void onResponse(Call<Movie> call, Response<Movie> response) {
+                        if (response.isSuccessful()) {
+                            data.postValue(MovieDetailsResource.success(response.body()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Movie> call, Throwable t) {
+                        t.printStackTrace();
+                        data.postValue(MovieDetailsResource.error(t.toString(), null));
+                    }
+                });
+            }
+        });
+        return data;
+    }
+
 }

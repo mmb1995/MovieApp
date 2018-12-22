@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -37,8 +36,6 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
     private static final String TAG = "MovieListFragment";
     public static final String BUNDLE_SEARCH_KEY = "searchKey";
 
-    @BindView(R.id.refresh)
-    SwipeRefreshLayout mRefresh;
     @BindView(R.id.rvMoviePosters)
     RecyclerView mPosterRecyclerView;
 
@@ -89,7 +86,7 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
     public void onClick(int position) {
         Movie selectedMovie =  mAdapter.getItemAtPosition(position);
         Intent detailIntent = new Intent(getActivity(), MovieDetails.class);
-        detailIntent.putExtra("movie", selectedMovie);
+        detailIntent.putExtra(MovieDetails.BUNDLE_ID, selectedMovie.getId());
         startActivity(detailIntent);
     }
 
@@ -114,7 +111,6 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
      */
     private void configureViewModelListener() {
         this.mMovieViewModel.getMovieData().observe(this, response -> {
-            mRefresh.setRefreshing(false);
             if (response != null) {
                 switch (response.getStatus()) {
                     case SUCCESS:

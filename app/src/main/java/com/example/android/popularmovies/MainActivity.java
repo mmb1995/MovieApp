@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,7 +27,7 @@ import dagger.android.support.HasSupportFragmentInjector;
 // COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
-        HasSupportFragmentInjector {
+        HasSupportFragmentInjector, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "Main_Activity";
 
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String BUNDLE_POSITION = "spinnerPos";
     private static final String BUNDLE_VALUE = "spinnerVal";
 
+    private SwipeRefreshLayout mSwipeRefresh;
     private Spinner mSpinner;
     private Bundle mBundle;
     boolean isRestored;
@@ -58,8 +60,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else {
             searchTerm = MovieUtils.MOST_POPULAR;
         }
-        Log.i(TAG, searchTerm);
-
+        mSwipeRefresh = findViewById(R.id.refresh);
+        mSwipeRefresh.setOnRefreshListener(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
@@ -102,6 +104,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onNothingSelected(AdapterView<?> adapterView) { }
 
     @Override
+    public void onRefresh() {
+        Log.i(TAG,"refreshing data");
+        mSwipeRefresh.setRefreshing(false);
+        getSelectedValue(mSpinner.getSelectedItemPosition());
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.i(TAG,"Saving mSpinner selection");
         outState.putInt(BUNDLE_POSITION, this.mSpinner.getSelectedItemPosition());
@@ -109,6 +118,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingAndroidInjector;
+    }
 
 
     /**
@@ -148,8 +161,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return dispatchingAndroidInjector;
-    }
 }

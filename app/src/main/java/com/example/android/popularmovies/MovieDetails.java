@@ -30,13 +30,12 @@ import dagger.android.support.HasSupportFragmentInjector;
 
 public class MovieDetails extends AppCompatActivity implements HasSupportFragmentInjector{
     private static final String TAG = "MovieDetails";
-    private static final String BUNDLE_ID = "id";
+    public static final String BUNDLE_ID = "movieId";
 
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
     @Inject
     FactoryViewModel mFactoryViewModel;
-    MovieDetailsViewModel mDetailsViewModel;
 
     //ButterKnife
     @BindView(R.id.titleTextView) TextView mTitleView;
@@ -52,6 +51,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
 
     private Movie mMovie;
     private MovieDetailsPageAdapter mAdapter;
+    private MovieDetailsViewModel mDetailsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,44 +59,53 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
         AndroidInjection.inject(this);
-
-        // Get the data passed in by the starting intent
-        mMovie = (Movie) getIntent().getParcelableExtra("movie");
-
-        // load the movie data into the ui
-        if (mMovie != null) {
-            // Loads the poster image into the ImageView
-            String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
-                    + mMovie.getPosterPath();
-            Picasso.get()
-                    .load(posterUrl)
-                    .placeholder(R.drawable.loading_image)
-                    .error(R.drawable.poster_error)
-                    .into(mPosterImageView);
-
-            // Sets the content to display in the relevant TextViews
-            mTitleView.setText(mMovie.getTitle());
-            mReleaseDateView.setText(mMovie.getReleaseDate());
-            mRatingView.setText(mMovie.getVoteAverage().toString());
-            mSummaryView.setText(mMovie.getOverview());
-            mDetailsViewModel = ViewModelProviders.of(this, mFactoryViewModel)
-                    .get(MovieDetailsViewModel.class);
-
-            setUpFavoritesButton();
-
-            // Set up ViewPager and connect it to the TabLayout
-            mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovie.getId(), this);
-            mViewPager.setAdapter(mAdapter);
-            mTabLayout.setupWithViewPager(mViewPager);
-        } else {
-            // End activity if movie data is unavailable
-            finish();
-        }
+        getMovie();
     }
 
     @Override
     public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
         return dispatchingAndroidInjector;
+    }
+
+    private void getMovie() {
+        this.mDetailsViewModel = ViewModelProviders.of(this, mFactoryViewModel)
+                .get(MovieDetailsViewModel.class);
+        mDetailsViewModel.init(getIntent().getIntExtra(BUNDLE_ID, 0));
+        mDetailsViewModel.getMovie().observe(this, response -> {
+            if (response != null) {
+                switch (response.status) {
+                    case SUCCESS:
+                        this.mMovie = (Movie) response.data;
+                        configureViews();
+                        setUpViewPager();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+    private void configureViews() {
+        String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
+                + mMovie.getPosterPath();
+        Picasso.get()
+                .load(posterUrl)
+                .placeholder(R.drawable.loading_image)
+                .error(R.drawable.poster_error)
+                .into(mPosterImageView);
+
+        mTitleView.setText(mMovie.getTitle());
+        mReleaseDateView.setText(mMovie.getReleaseDate());
+        mRatingView.setText(mMovie.getVoteAverage().toString());
+        mSummaryView.setText(mMovie.getOverview());
+        setUpFavoritesButton();
+    }
+
+    private void setUpViewPager() {
+        mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovie.getId(), this);
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 
     private void setUpFavoritesButton() {
@@ -135,7 +144,6 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
                 Toast.LENGTH_SHORT).show();
         mMovie.unmarkFavorite();
         mDetailsViewModel.removeFavorite(mMovie);
-
     }
 
 
