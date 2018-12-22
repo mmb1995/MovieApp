@@ -9,24 +9,25 @@ import java.util.List;
  * A generic wrapper class for api responses that holds the status of the response, and the
  * data returned by the response.
  */
-public class MovieApiResource<T> {
+public class MovieResource<T> {
     private List<T> data;
     private final Status status;
     private Throwable error;
 
-    private MovieApiResource(@Nullable List<T> data, @NonNull Status status,
+    private MovieResource(@Nullable List<T> data, @NonNull Status status,
                             @Nullable Throwable error) {
         this.data = data;
         this.status = status;
         this.error = error;
     }
 
-    public static <T>MovieApiResource<T> success(@NonNull List<T> data) {
-        return new MovieApiResource<T>(data, Status.SUCCESS, null);
+
+    public static <T>MovieResource<T> success(@NonNull List<T> data) {
+        return new MovieResource<T>(data, Status.SUCCESS, null);
     }
 
-    public static <T>MovieApiResource<T> error(Throwable error) {
-        return new MovieApiResource<T>(null, Status.ERROR, error);
+    public static <T>MovieResource<T> error(Throwable error) {
+        return new MovieResource<T>(null, Status.ERROR, error);
     }
 
     public List<T> getData() {

@@ -37,6 +37,19 @@ dependencies {
     implementation 'com.jakewharton:butterknife:9.0.0-rc2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc2'
 
+    // Dagger 2.0
+    implementation 'com.google.dagger:dagger-android:2.19'
+    implementation 'com.google.dagger:dagger-android-support:2.19'
+    implementation 'com.google.dagger:dagger:2.19'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.19'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.19'
+
+    // Room
+    def room_version = "1.1.1"
+
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'
 

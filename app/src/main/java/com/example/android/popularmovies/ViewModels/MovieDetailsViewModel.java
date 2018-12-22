@@ -5,23 +5,43 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
-import com.example.android.popularmovies.remote.MovieApiResource;
+import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.remote.MovieDetailsResource;
 import com.example.android.popularmovies.remote.MovieRepository;
+import com.example.android.popularmovies.remote.MovieResource;
+
+import javax.inject.Inject;
 
 public class MovieDetailsViewModel extends ViewModel {
     private static final String TAG = "MovieDetailsViewModel";
 
+    private LiveData<MovieDetailsResource> movie;
+
     // Holds movie trailer data returned by the repo
-    private MutableLiveData<MovieApiResource> mMovieTrailersList;
+    private MutableLiveData<MovieResource> mMovieTrailersList;
 
     // hold movie review data returned by the repo
-    private MutableLiveData<MovieApiResource> mMovieReviewsList;
+    private MutableLiveData<MovieResource> mMovieReviewsList;
+
 
     // Reference to the repository used to collect information through network request
     private final MovieRepository mMovieRepository;
 
-    public MovieDetailsViewModel() {
-        this.mMovieRepository = MovieRepository.getInstance();
+    // Instructs Dagger 2 to provide the MovieRepository parameter
+    @Inject
+    public MovieDetailsViewModel(MovieRepository movieRepo) {
+        this.mMovieRepository = movieRepo;
+    }
+
+    public void init(int movieId) {
+        if (this.movie != null) {
+            return;
+        }
+        movie = mMovieRepository.getMovieById(movieId);
+    }
+
+    public LiveData<MovieDetailsResource> getMovie() {
+        return this.movie;
     }
 
     /**
@@ -50,7 +70,7 @@ public class MovieDetailsViewModel extends ViewModel {
      * Returns the MovieApiResource that contains the trailer data returned from the repo
      * @return
      */
-    public LiveData<MovieApiResource> getMovieTrailers() {
+    public LiveData<MovieResource> getMovieTrailers() {
         return mMovieTrailersList;
     }
 
@@ -58,7 +78,7 @@ public class MovieDetailsViewModel extends ViewModel {
      * Returns the MovieApiResource that contains the user reviews returned from the repo
      * @return
      */
-    public LiveData<MovieApiResource> getMovieReviews() {return mMovieReviewsList;}
+    public LiveData<MovieResource> getMovieReviews() {return mMovieReviewsList;}
 
     /**
      * Calls the repo to fetch the movie trailers associated with the given movieId
@@ -74,6 +94,14 @@ public class MovieDetailsViewModel extends ViewModel {
      */
     private void loadMovieReviews(int movieId) {
         mMovieRepository.getReviews(this.mMovieReviewsList, movieId);
+    }
+
+    public void addFavorite(Movie movie) {
+        mMovieRepository.addMovie(movie);
+    }
+
+    public void removeFavorite(Movie movie) {
+        mMovieRepository.deleteMovie(movie);
     }
 
 }

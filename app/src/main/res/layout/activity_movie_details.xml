@@ -50,15 +50,24 @@
                     android:id="@+id/dateTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/defaultMargin"
+                    android:layout_gravity="center"
                     android:textSize="15sp"/>
                 <TextView
                     style="@style/movieTextStyle"
                     android:id="@+id/ratingTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/defaultMargin"
-                    android:textSize="15sp"
-                    android:layout_marginStart="@dimen/defaultMargin" />
+                    android:layout_marginRight="@dimen/defaultMargin"
+                    android:layout_gravity="center"
+                    android:textSize="15sp" />
+                <CheckBox
+                    android:id="@+id/favorites_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@android:drawable/btn_star"
+                    android:background="@android:color/transparent"
+                    android:padding="@dimen/defaultMargin" />
 
             </LinearLayout>
 

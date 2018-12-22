@@ -14,6 +14,7 @@ public class MovieUtils {
     // Sort terms
     public static final String MOST_POPULAR = "popular";
     public static final String TOP_RATED = "top_rated";
+    public static final String FAVORITES = "favorite";
 
     // Image URL Resources
     public static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";

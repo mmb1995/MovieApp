@@ -5,21 +5,27 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
-import com.example.android.popularmovies.remote.MovieApiResource;
 import com.example.android.popularmovies.remote.MovieRepository;
+import com.example.android.popularmovies.remote.MovieResource;
+
+import javax.inject.Inject;
 
 public class MovieViewModel extends ViewModel {
 
     private static final String TAG = "MovieViewModel";
 
     // Holds data returned from network requests by the repository
-    private MutableLiveData<MovieApiResource> mMovieResource;
+    private LiveData<MovieResource> mMovieResource;
 
     // Reference to the repository used to collect information through network requests
     private final MovieRepository mMovieRepository;
 
-    public MovieViewModel() {
-        this.mMovieRepository = MovieRepository.getInstance();
+    private int count = 0;
+
+    // Tells dagger 2 to inject the MovieRepository parameter
+    @Inject
+    public MovieViewModel(MovieRepository movieRepository) {
+        this.mMovieRepository = movieRepository;
     }
 
     /**
@@ -33,25 +39,25 @@ public class MovieViewModel extends ViewModel {
     }
 
     /**
-     * This needs to be called after an activity or fragment receives  an instance of the viewmodel,
+     * This needs to be called after an activity or fragment receives  an instance of the ViewModel,
      * this is used to set up the data stored in the viewmodel.
      * @param searchTerm
      */
     public void init(String searchTerm) {
-        Log.i(TAG,"Setting up view model");
+        count++;
+        Log.i(TAG,"Setting up view model" + count);
         if (this.mMovieResource != null) {
             // Don't create a new instance if one already exists
             Log.i(TAG, "Data already present");
             return;
         }
         Log.i(TAG, "Init search value = " + searchTerm);
-        mMovieResource = new MutableLiveData<>();
         loadMovieData(searchTerm);
     }
 
     // COMPLETED respond to spinner selections and get data to update after load data is called
     // Returns the list of Movie data
-    public LiveData<MovieApiResource> getMovieData() {
+    public LiveData<MovieResource> getMovieData() {
         return mMovieResource;
     }
 
@@ -64,6 +70,7 @@ public class MovieViewModel extends ViewModel {
     // Calls the repository and passes it the term that will be used to query theMovieDB
     private void loadMovieData(String searchTerm) {
         //Log.i(TAG, "getting Movie data from repo");
-        mMovieRepository.getMovies(this.mMovieResource, searchTerm);
+        this.mMovieResource = mMovieRepository.getMovies(searchTerm);
     }
+
 }

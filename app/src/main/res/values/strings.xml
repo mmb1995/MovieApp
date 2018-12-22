@@ -7,6 +7,7 @@
     <string-array name="dropdown_array">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Favorites</item>
     </string-array>
 
     <!-- Error Messages -->
@@ -16,6 +17,8 @@
     <!-- Movie Details-->
     <string name="trailer_tab">Videos</string>
     <string name="reviews_tab">User Reviews</string>
+    <string name="favorite_button_text">Mark as Favorite</string>
+    <string name="favorite_button_remove_favorite_text">Remove Favorite</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
