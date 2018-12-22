@@ -134,6 +134,13 @@ public class MovieRepository {
         });
     }
 
+    public void deleteMovie(final Movie movie) {
+        Log.i(TAG, "Removing movie from database");
+        executor.execute(() -> {
+            mMovieDao.removeMovie(movie);
+        });
+    }
+
     private LiveData<MovieResource> getFavorites() {
         // Gets the data from the database
         final LiveData<List<Movie>> source = mMovieDao.getFavoriteMovies();
@@ -143,7 +150,7 @@ public class MovieRepository {
         mediator.addSource(source, new Observer<List<Movie>>() {
             @Override
             public void onChanged(@Nullable List<Movie> favoriteMovies) {
-                Log.d(TAG, "Recieved data from database");
+                Log.d(TAG, "Received data from database");
                 MovieResource resource = MovieResource.success(favoriteMovies);
                 mediator.setValue(resource);
             }

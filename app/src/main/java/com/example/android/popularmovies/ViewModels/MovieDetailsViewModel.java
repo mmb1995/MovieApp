@@ -85,4 +85,8 @@ public class MovieDetailsViewModel extends ViewModel {
         mMovieRepository.addMovie(movie);
     }
 
+    public void removeFavorite(Movie movie) {
+        mMovieRepository.deleteMovie(movie);
+    }
+
 }

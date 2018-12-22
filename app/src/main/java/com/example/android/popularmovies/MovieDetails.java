@@ -6,8 +6,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +36,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
     @Inject
     FactoryViewModel mFactoryViewModel;
+    MovieDetailsViewModel mDetailsViewModel;
 
     //ButterKnife
     @BindView(R.id.titleTextView) TextView mTitleView;
@@ -45,7 +45,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @BindView(R.id.summaryTextView) TextView mSummaryView;
     @BindView(R.id.detailPosterImageView) ImageView mPosterImageView;
     @BindView(R.id.favorites_button)
-    Button mFavoritesButton;
+    CheckBox mFavoritesButton;
     @BindView(R.id.view_pager)
     CustomViewPager mViewPager;
     @BindView(R.id.movieDetailsTabLayout) TabLayout mTabLayout;
@@ -75,20 +75,14 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
                     .into(mPosterImageView);
 
             // Sets the content to display in the relevant TextViews
-            Log.i(TAG,mMovie.getReleaseDate());
-            Log.i(TAG, mMovie.getPosterPath());
             mTitleView.setText(mMovie.getTitle());
             mReleaseDateView.setText(mMovie.getReleaseDate());
             mRatingView.setText(mMovie.getVoteAverage().toString());
             mSummaryView.setText(mMovie.getOverview());
+            mDetailsViewModel = ViewModelProviders.of(this, mFactoryViewModel)
+                    .get(MovieDetailsViewModel.class);
 
-            // Set up button
-            mFavoritesButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    addToFavorites();
-                }
-            });
+            setUpFavoritesButton();
 
             // Set up ViewPager and connect it to the TabLayout
             mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovie.getId(), this);
@@ -105,12 +99,43 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         return dispatchingAndroidInjector;
     }
 
+    private void setUpFavoritesButton() {
+        Log.i(TAG, "Favorite = " + mMovie.isFavorite);
+        if (mMovie.isFavorite == 1) {
+            mFavoritesButton.setChecked(true);
+        } else {
+            mFavoritesButton.setChecked(false);
+        }
+
+        // Set up listener for changes in toggle button state
+        mFavoritesButton.setOnCheckedChangeListener((favoritesButton, isChecked) -> {
+            if (isChecked) {
+                addToFavorites();
+            } else {
+                removeFavorite();
+            }
+        });
+    }
+
+    /**
+     * Adds the movie to the favorites database
+     */
     private void addToFavorites() {
-        Toast.makeText(MovieDetails.this, "Movie added to favorites",
+        Toast.makeText(MovieDetails.this, "Movie marked as favorite",
                 Toast.LENGTH_SHORT).show();
         mMovie.setAsFavorite();
-        MovieDetailsViewModel viewModel = ViewModelProviders.of(this, mFactoryViewModel).get(MovieDetailsViewModel.class);
-        viewModel.addFavorite(mMovie);
+        mDetailsViewModel.addFavorite(mMovie);
+    }
+
+    /**
+     * Removes movie from the favorites database
+     */
+    private void removeFavorite() {
+        Toast.makeText(this, "Movie removed from favorites",
+                Toast.LENGTH_SHORT).show();
+        mMovie.unmarkFavorite();
+        mDetailsViewModel.removeFavorite(mMovie);
+
     }
 
 

@@ -56,15 +56,17 @@
                     android:id="@+id/ratingTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/defaultMargin"
+                    android:layout_marginh="@dimen/defaultMargin"
                     android:textSize="15sp"
                     android:layout_marginStart="@dimen/defaultMargin" />
-                <Button
+                <CheckBox
                     android:id="@+id/favorites_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/defaultMargin"
-                    android:text="@string/favorite_button_text"/>
+                    android:button="@android:drawable/btn_star"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/defaultMargin" />
 
             </LinearLayout>
 

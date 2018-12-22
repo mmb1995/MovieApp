@@ -66,6 +66,7 @@ public class Movie implements Parcelable
         this.posterPath = ((String) in.readValue((String.class.getClassLoader())));
         this.overview = ((String) in.readValue((String.class.getClassLoader())));
         this.releaseDate = ((String) in.readValue((String.class.getClassLoader())));
+        this.isFavorite = ((Integer) in.readValue((Integer.class.getClassLoader())));
     }
 
     public Movie() {
@@ -124,6 +125,8 @@ public class Movie implements Parcelable
         this.isFavorite = 1;
     }
 
+    public void unmarkFavorite() {this.isFavorite = 0; }
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(voteAverage);
@@ -131,6 +134,7 @@ public class Movie implements Parcelable
         dest.writeValue(posterPath);
         dest.writeValue(overview);
         dest.writeValue(releaseDate);
+        dest.writeValue(isFavorite);
     }
 
     public int describeContents() {
