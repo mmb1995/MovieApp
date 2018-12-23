@@ -56,7 +56,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        setContentView(R.layout.activity_movie_details_3);
         ButterKnife.bind(this);
         AndroidInjection.inject(this);
         getMovie();
