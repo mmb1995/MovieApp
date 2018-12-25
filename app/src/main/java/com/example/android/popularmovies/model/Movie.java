@@ -38,6 +38,9 @@ public class Movie implements Parcelable
     @SerializedName("release_date")
     @Expose
     public String releaseDate;
+    @SerializedName("runtime")
+    @Expose
+    public Integer runtime;
 
     @ColumnInfo(name = "favorite")
     public int isFavorite;
@@ -119,6 +122,11 @@ public class Movie implements Parcelable
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+
+    public Integer getRuntime() {
+        return runtime;
     }
 
     public void setAsFavorite() {

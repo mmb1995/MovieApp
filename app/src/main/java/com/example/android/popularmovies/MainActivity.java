@@ -139,6 +139,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.TOP_RATED);
                 break;
             case 2:
+                args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.NOW_PLAYING);
+                break;
+            case 3:
+                args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.COMING_SOON);
+                break;
+            case 4:
                 args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.FAVORITES);
                 break;
             default:

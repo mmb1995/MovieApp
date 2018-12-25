@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 
 public interface MovieApiService {
 
-    @GET("movie/{search_term}")
+    @GET("movie/{search_term}?region=US")
     Call<MovieResponse> getMovies(@Path("search_term") String searchTerm,
                                   @Query(MovieUtils.API_PARAM) String apiKey);
 

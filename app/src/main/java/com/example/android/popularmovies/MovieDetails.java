@@ -42,6 +42,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @BindView(R.id.dateTextView) TextView mReleaseDateView;
     @BindView(R.id.ratingTextView) TextView mRatingView;
     @BindView(R.id.summaryTextView) TextView mSummaryView;
+    @BindView(R.id.runtimeTextView) TextView mRuntimeView;
     @BindView(R.id.detailPosterImageView) ImageView mPosterImageView;
     @BindView(R.id.favorites_button)
     CheckBox mFavoritesButton;
@@ -56,7 +57,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details_3);
+        setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
         AndroidInjection.inject(this);
         getMovie();
@@ -96,10 +97,36 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
                 .into(mPosterImageView);
 
         mTitleView.setText(mMovie.getTitle());
-        mReleaseDateView.setText(mMovie.getReleaseDate());
+
+        // Parses the date to get the release year
+        String releaseDate = mMovie.getReleaseDate();
+        String releaseYear;
+        if (releaseDate != null && releaseDate.length() >= 4) {
+            releaseYear = releaseDate.substring(0, 4);
+        } else {
+            releaseYear = "Unknown";
+        }
+        mReleaseDateView.setText(releaseYear);
         mRatingView.setText(mMovie.getVoteAverage().toString());
         mSummaryView.setText(mMovie.getOverview());
+        setRuntime();
         setUpFavoritesButton();
+    }
+
+
+    private void setRuntime() {
+        Integer runtime = mMovie.getRuntime();
+        if (runtime != null) {
+            int hours = runtime / 60;
+            int minutes = runtime % 60;
+            if (hours > 0) {
+                String formattedRuntime = hours + "h " + minutes + "min";
+                mRuntimeView.setText(formattedRuntime);
+            } else {
+                String formattedRuntime = minutes + "min";
+                mRuntimeView.setText(formattedRuntime);
+            }
+        }
     }
 
     private void setUpViewPager() {
