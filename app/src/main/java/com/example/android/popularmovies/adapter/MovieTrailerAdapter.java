@@ -3,9 +3,11 @@ package com.example.android.popularmovies.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
@@ -18,9 +20,9 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
     private static final String TAG = "MovieTrailerAdapter";
     private final Context mContext;
     private List<MovieTrailer> movieTrailerList;
-    private final RecyclerViewClickListener mListener;
+    private final TrailerClickListener mListener;
 
-    public MovieTrailerAdapter(Context context, RecyclerViewClickListener listener) {
+    public MovieTrailerAdapter(Context context, TrailerClickListener listener) {
         this.mContext = context;
         this.mListener = listener;
     }
@@ -63,19 +65,32 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
 
     public static class MovieTrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         final TextView mTrailerView;
-        private RecyclerViewClickListener mListener;
+        final ImageButton mShareButton;
+        private TrailerClickListener mListener;
 
-        MovieTrailerViewHolder(View itemView, RecyclerViewClickListener listener) {
+        MovieTrailerViewHolder(View itemView, TrailerClickListener listener) {
             super(itemView);
             mTrailerView = itemView.findViewById(R.id.trailerTextView);
+            mShareButton = itemView.findViewById(R.id.trailer_share_button);
             this.mListener = listener;
-            itemView.setOnClickListener(this);
+            mTrailerView.setOnClickListener(this);
+            mShareButton.setOnClickListener(this);
         }
 
 
         @Override
         public void onClick(View view) {
-            mListener.onClick(getAdapterPosition());
+            Log.i(TAG,"" + view.getId());
+            switch (view.getId()) {
+                case R.id.trailerTextView:
+                    mListener.onTrailerClicked(getAdapterPosition());
+                    break;
+                case R.id.trailer_share_button:
+                    mListener.onShareTrailer(getAdapterPosition());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

@@ -80,6 +80,9 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
                         configureViews();
                         setUpViewPager();
                         break;
+                    case ERROR:
+                        Toast.makeText(this, getString(R.string.apiError), Toast.LENGTH_SHORT).show();
+                        finish();
                     default:
                         break;
                 }
@@ -104,7 +107,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         if (releaseDate != null && releaseDate.length() >= 4) {
             releaseYear = releaseDate.substring(0, 4);
         } else {
-            releaseYear = "Unknown";
+            releaseYear = "N/A";
         }
         mReleaseDateView.setText(releaseYear);
         mRatingView.setText(mMovie.getVoteAverage().toString());
@@ -126,6 +129,8 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
                 String formattedRuntime = minutes + "min";
                 mRuntimeView.setText(formattedRuntime);
             }
+        } else {
+            mRuntimeView.setText("N/A");
         }
     }
 

@@ -68,6 +68,7 @@ public class ReviewFragment extends Fragment {
         this.setUpReviews();
     }
 
+
     private void configureDagger() {
         AndroidSupportInjection.inject(this);
     }
