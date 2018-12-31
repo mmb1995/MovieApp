@@ -25,7 +25,6 @@ public class MovieUtils {
 
     // Trailer Resources
     public static final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
-    public static final String YOUTUBE_KEY_PARAM = "v=";
 
 }
 

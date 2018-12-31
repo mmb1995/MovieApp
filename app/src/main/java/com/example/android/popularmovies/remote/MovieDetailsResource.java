@@ -8,7 +8,8 @@ public class MovieDetailsResource<T> {
     public final Status status;
     @Nullable
     public final T data;
-    @Nullable public final String message;
+    @Nullable
+    private final String message;
     private MovieDetailsResource(@NonNull Status status, @Nullable T data,
                                  @Nullable String message) {
         this.status = status;

@@ -65,7 +65,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
         AndroidInjection.inject(this);
-        getMovie();
+        getSelectedMovie();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         return dispatchingAndroidInjector;
     }
 
-    private void getMovie() {
+    private void getSelectedMovie() {
         this.mDetailsViewModel = ViewModelProviders.of(this, mFactoryViewModel)
                 .get(MovieDetailsViewModel.class);
         mDetailsViewModel.init(getIntent().getIntExtra(BUNDLE_ID, 0));
@@ -98,6 +98,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     private void configureViews() {
         String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
                 + mMovie.getPosterPath();
+
         Picasso.get()
                 .load(posterUrl)
                 .into(mPosterImageView, new Callback() {
@@ -129,7 +130,9 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         setUpFavoritesButton();
     }
 
-
+    /**
+     * Formats the runtime returned by the viewmodel
+     */
     private void setRuntime() {
         Integer runtime = mMovie.getRuntime();
         if (runtime != null) {

@@ -20,6 +20,7 @@ public class MovieViewModel extends ViewModel {
     // Reference to the repository used to collect information through network requests
     private final MovieRepository mMovieRepository;
 
+    //NOTE: For testing
     private int count = 0;
 
     // Tells dagger 2 to inject the MovieRepository parameter
@@ -55,7 +56,6 @@ public class MovieViewModel extends ViewModel {
         loadMovieData(searchTerm);
     }
 
-    // COMPLETED respond to spinner selections and get data to update after load data is called
     // Returns the list of Movie data
     public LiveData<MovieResource> getMovieData() {
         return mMovieResource;

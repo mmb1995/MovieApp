@@ -22,6 +22,8 @@ import com.example.android.popularmovies.adapter.MovieTrailerAdapter;
 import com.example.android.popularmovies.adapter.TrailerClickListener;
 import com.example.android.popularmovies.model.MovieTrailer;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -38,8 +40,6 @@ public class TrailerFragment extends Fragment implements TrailerClickListener {
 
     @Inject
     public FactoryViewModel mFactoryViewModel;
-    private int mMovieId;
-    private MovieDetailsViewModel mTrailerViewModel;
     private MovieTrailerAdapter mTrailerAdapter;
 
     public TrailerFragment() {
@@ -57,7 +57,7 @@ public class TrailerFragment extends Fragment implements TrailerClickListener {
         mTrailerRecyclerView.setLayoutManager( new LinearLayoutManager(getActivity()));
         mTrailerAdapter = new MovieTrailerAdapter(getActivity(), this);
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
-        ViewCompat.setNestedScrollingEnabled(mTrailerRecyclerView, false);;
+        ViewCompat.setNestedScrollingEnabled(mTrailerRecyclerView, false);
         return rootView;
     }
 
@@ -105,9 +105,9 @@ public class TrailerFragment extends Fragment implements TrailerClickListener {
     }
 
     private void setUpTrailers() {
-        this.mMovieId = getArguments().getInt(ID_KEY);
+        int mMovieId = Objects.requireNonNull(getArguments()).getInt(ID_KEY);
         Log.i(TAG, "movieId = " + mMovieId);
-        mTrailerViewModel = ViewModelProviders.of(getActivity(),mFactoryViewModel ).get(MovieDetailsViewModel.class);
+        MovieDetailsViewModel mTrailerViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity()), mFactoryViewModel).get(MovieDetailsViewModel.class);
         mTrailerViewModel.initTrailers(mMovieId);
 
         // Set up observer and callback

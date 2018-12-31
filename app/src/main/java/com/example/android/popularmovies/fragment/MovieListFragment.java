@@ -23,6 +23,8 @@ import com.example.android.popularmovies.adapter.MovieAdapter;
 import com.example.android.popularmovies.adapter.RecyclerViewClickListener;
 import com.example.android.popularmovies.model.Movie;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -54,7 +56,7 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mSearchTerm = getArguments().getString(BUNDLE_SEARCH_KEY);
+        this.mSearchTerm = Objects.requireNonNull(getArguments()).getString(BUNDLE_SEARCH_KEY);
     }
 
 

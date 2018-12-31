@@ -18,6 +18,8 @@ import com.example.android.popularmovies.ViewModels.FactoryViewModel;
 import com.example.android.popularmovies.ViewModels.MovieDetailsViewModel;
 import com.example.android.popularmovies.adapter.MovieReviewAdapter;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -34,11 +36,8 @@ public class ReviewFragment extends Fragment {
     @BindView(R.id.reviewRecyclerView)
     RecyclerView mReviewRecyclerview;
 
-    // TODO: Rename and change types of parameters
-    private int mMovieId;
     @Inject
     public FactoryViewModel mFactoryViewModel;
-    private MovieDetailsViewModel mReviewViewModel;
     private MovieReviewAdapter mReviewAdapter;
 
     public ReviewFragment() {
@@ -68,15 +67,14 @@ public class ReviewFragment extends Fragment {
         this.setUpReviews();
     }
 
-
     private void configureDagger() {
         AndroidSupportInjection.inject(this);
     }
 
     private void setUpReviews() {
-        this.mMovieId = getArguments().getInt(ID_KEY);
+        int mMovieId = Objects.requireNonNull(getArguments()).getInt(ID_KEY);
         Log.i(TAG, "movieId = " + mMovieId);
-        mReviewViewModel = ViewModelProviders.of(getActivity(),mFactoryViewModel ).get(MovieDetailsViewModel.class);
+        MovieDetailsViewModel mReviewViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity()), mFactoryViewModel).get(MovieDetailsViewModel.class);
         mReviewViewModel.initReviews(mMovieId);
 
         // Set up observer and callback

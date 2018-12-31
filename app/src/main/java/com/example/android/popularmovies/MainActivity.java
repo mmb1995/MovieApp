@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SwipeRefreshLayout mSwipeRefresh;
     private Spinner mSpinner;
     private Bundle mBundle;
-    boolean isRestored;
+    private boolean isRestored;
 
 
     @Inject
@@ -55,11 +55,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (savedInstanceState != null) {
             Log.i(TAG, "Restoring previous state");
             this.mBundle = savedInstanceState;
-            searchTerm = savedInstanceState.getString(BUNDLE_VALUE, MovieUtils.MOST_POPULAR);
             isRestored = true;
-        } else {
-            searchTerm = MovieUtils.MOST_POPULAR;
         }
+
         mSwipeRefresh = findViewById(R.id.refresh);
         mSwipeRefresh.setOnRefreshListener(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -153,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         createMovieListFragment(args);
     }
 
-    public void createMovieListFragment(Bundle args) {
+    private void createMovieListFragment(Bundle args) {
         if (isRestored) {
             Log.i(TAG, "fragment restored from previous state");
             isRestored = false;
