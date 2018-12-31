@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         AndroidInjection.inject(this);
 
         // Check if any data was passed into the activity from a previous state
-        String searchTerm;
         if (savedInstanceState != null) {
             Log.i(TAG, "Restoring previous state");
             this.mBundle = savedInstanceState;

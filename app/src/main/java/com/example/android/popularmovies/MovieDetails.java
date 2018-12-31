@@ -2,6 +2,8 @@ package com.example.android.popularmovies;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +56,12 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @BindView(R.id.view_pager)
     CustomViewPager mViewPager;
     @BindView(R.id.movieDetailsTabLayout) TabLayout mTabLayout;
+    @BindView(R.id.toolbar)
+    android.support.v7.widget.Toolbar mToolbar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolBar;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout mAppBar;
 
     private Movie mMovie;
     private MovieDetailsPageAdapter mAdapter;
@@ -62,8 +70,31 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        setContentView(R.layout.activity_movie_details_2);
         ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Only show title when toolbar is collapsed
+        mAppBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            boolean isShown = true;
+            int scrollRange = -1;
+
+            if(scrollRange == -1) {
+                scrollRange = appBarLayout.getTotalScrollRange();
+            }
+            if (scrollRange + verticalOffset == 0) {
+                if (mMovie != null) {
+                    mCollapsingToolBar.setTitle(mMovie.getTitle());
+                } else {
+                    mCollapsingToolBar.setTitle(" ");
+                }
+                isShown = true;
+            } else if (isShown) {
+                mCollapsingToolBar.setTitle(" ");
+                isShown= false;
+            }
+        });
         AndroidInjection.inject(this);
         getSelectedMovie();
     }

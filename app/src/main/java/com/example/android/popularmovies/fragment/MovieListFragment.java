@@ -7,8 +7,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,13 +95,13 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
     private void setUpPosterList() {
         // Checks the orientation to decide how to display the grid
         int orientation = getResources().getConfiguration().orientation;
-        StaggeredGridLayoutManager mGridLayoutManager;
+        GridLayoutManager mGridLayoutManager;
         if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mGridLayoutManager = new StaggeredGridLayoutManager(2,
-                    StaggeredGridLayoutManager.VERTICAL);
+            mGridLayoutManager = new GridLayoutManager(getContext(),
+                    2);
         } else {
-            mGridLayoutManager = new StaggeredGridLayoutManager(3,
-                    StaggeredGridLayoutManager.VERTICAL);
+            mGridLayoutManager = new GridLayoutManager(getContext(),
+                    3);
         }
         this.mAdapter= new MovieAdapter(getContext(), this);
         this.mPosterRecyclerView.setLayoutManager(mGridLayoutManager);
