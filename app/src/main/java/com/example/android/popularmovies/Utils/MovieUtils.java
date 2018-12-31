@@ -15,15 +15,16 @@ public class MovieUtils {
     public static final String MOST_POPULAR = "popular";
     public static final String TOP_RATED = "top_rated";
     public static final String FAVORITES = "favorite";
+    public static final String NOW_PLAYING = "now_playing";
+    public static final String COMING_SOON="upcoming";
 
     // Image URL Resources
     public static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
-    public static final String POSTER_IMAGE_SIZE_MAIN_GRID = "w185";
+    public static final String POSTER_IMAGE_SIZE_MAIN_GRID = "w342";
     public static final String POSTER_IMAGE_SIZE_DETAIL = "w780";
 
     // Trailer Resources
     public static final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
-    public static final String YOUTUBE_KEY_PARAM = "v=";
 
 }
 

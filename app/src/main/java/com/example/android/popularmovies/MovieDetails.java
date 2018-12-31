@@ -2,12 +2,16 @@ package com.example.android.popularmovies;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +21,7 @@ import com.example.android.popularmovies.ViewModels.MovieDetailsViewModel;
 import com.example.android.popularmovies.adapter.MovieDetailsPageAdapter;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.views.CustomViewPager;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -42,15 +47,23 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @BindView(R.id.dateTextView) TextView mReleaseDateView;
     @BindView(R.id.ratingTextView) TextView mRatingView;
     @BindView(R.id.summaryTextView) TextView mSummaryView;
+    @BindView(R.id.runtimeTextView) TextView mRuntimeView;
     @BindView(R.id.detailPosterImageView) ImageView mPosterImageView;
+    @BindView(R.id.detailPosterProgressBar)
+    ProgressBar mProgressBar;
     @BindView(R.id.favorites_button)
     CheckBox mFavoritesButton;
     @BindView(R.id.view_pager)
     CustomViewPager mViewPager;
     @BindView(R.id.movieDetailsTabLayout) TabLayout mTabLayout;
+    @BindView(R.id.toolbar)
+    android.support.v7.widget.Toolbar mToolbar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolBar;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout mAppBar;
 
     private Movie mMovie;
-    private MovieDetailsPageAdapter mAdapter;
     private MovieDetailsViewModel mDetailsViewModel;
 
     @Override
@@ -58,8 +71,30 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+
+        // Only show title when toolbar is collapsed
+        mAppBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            boolean isShown = true;
+            int scrollRange = -1;
+
+            if(scrollRange == -1) {
+                scrollRange = appBarLayout.getTotalScrollRange();
+            }
+            if (scrollRange + verticalOffset == 0) {
+                if (mMovie != null) {
+                    mCollapsingToolBar.setTitle(mMovie.getTitle());
+                } else {
+                    mCollapsingToolBar.setTitle(" ");
+                }
+                isShown = true;
+            } else if (isShown) {
+                mCollapsingToolBar.setTitle(" ");
+                isShown= false;
+            }
+        });
         AndroidInjection.inject(this);
-        getMovie();
+        getSelectedMovie();
     }
 
     @Override
@@ -67,7 +102,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
         return dispatchingAndroidInjector;
     }
 
-    private void getMovie() {
+    private void getSelectedMovie() {
         this.mDetailsViewModel = ViewModelProviders.of(this, mFactoryViewModel)
                 .get(MovieDetailsViewModel.class);
         mDetailsViewModel.init(getIntent().getIntExtra(BUNDLE_ID, 0));
@@ -79,6 +114,9 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
                         configureViews();
                         setUpViewPager();
                         break;
+                    case ERROR:
+                        Toast.makeText(this, getString(R.string.apiError), Toast.LENGTH_SHORT).show();
+                        finish();
                     default:
                         break;
                 }
@@ -89,21 +127,60 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     private void configureViews() {
         String posterUrl = MovieUtils.BASE_IMAGE_URL + MovieUtils.POSTER_IMAGE_SIZE_DETAIL
                 + mMovie.getPosterPath();
+
         Picasso.get()
                 .load(posterUrl)
-                .placeholder(R.drawable.loading_image)
-                .error(R.drawable.poster_error)
-                .into(mPosterImageView);
+                .into(mPosterImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                });
 
         mTitleView.setText(mMovie.getTitle());
-        mReleaseDateView.setText(mMovie.getReleaseDate());
+
+        // Parses the date to get the release year
+        String releaseDate = mMovie.getReleaseDate();
+        String releaseYear;
+        if (releaseDate != null && releaseDate.length() >= 4) {
+            releaseYear = releaseDate.substring(0, 4);
+        } else {
+            releaseYear = "N/A";
+        }
+        mReleaseDateView.setText(releaseYear);
         mRatingView.setText(mMovie.getVoteAverage().toString());
         mSummaryView.setText(mMovie.getOverview());
+        setRuntime();
         setUpFavoritesButton();
     }
 
+    /**
+     * Formats the runtime returned by the ViewModel
+     */
+    private void setRuntime() {
+        Integer runtime = mMovie.getRuntime();
+        if (runtime != null) {
+            int hours = runtime / 60;
+            int minutes = runtime % 60;
+            if (hours > 0) {
+                String formattedRuntime = hours + "h " + minutes + "min";
+                mRuntimeView.setText(formattedRuntime);
+            } else {
+                String formattedRuntime = minutes + "min";
+                mRuntimeView.setText(formattedRuntime);
+            }
+        } else {
+            mRuntimeView.setText("N/A");
+        }
+    }
+
     private void setUpViewPager() {
-        mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovie.getId(), this);
+        MovieDetailsPageAdapter mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovie.getId(), this);
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }

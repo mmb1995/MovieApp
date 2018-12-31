@@ -39,6 +39,7 @@ public class AppModule {
     @Singleton
     MovieDatabase provideDatabase(Application application) {
         return Room.databaseBuilder(application, MovieDatabase.class, "movieDatabase.db")
+                .addMigrations(MovieDatabase.MIGRATION_1_2)
                 .build();
     }
 

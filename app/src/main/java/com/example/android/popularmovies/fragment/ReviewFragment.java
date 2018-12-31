@@ -3,6 +3,7 @@ package com.example.android.popularmovies.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -17,6 +18,8 @@ import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.ViewModels.FactoryViewModel;
 import com.example.android.popularmovies.ViewModels.MovieDetailsViewModel;
 import com.example.android.popularmovies.adapter.MovieReviewAdapter;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -34,11 +37,8 @@ public class ReviewFragment extends Fragment {
     @BindView(R.id.reviewRecyclerView)
     RecyclerView mReviewRecyclerview;
 
-    // TODO: Rename and change types of parameters
-    private int mMovieId;
     @Inject
     public FactoryViewModel mFactoryViewModel;
-    private MovieDetailsViewModel mReviewViewModel;
     private MovieReviewAdapter mReviewAdapter;
 
     public ReviewFragment() {
@@ -46,7 +46,7 @@ public class ReviewFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_review, container, false);
@@ -73,9 +73,9 @@ public class ReviewFragment extends Fragment {
     }
 
     private void setUpReviews() {
-        this.mMovieId = getArguments().getInt(ID_KEY);
+        int mMovieId = Objects.requireNonNull(getArguments()).getInt(ID_KEY);
         Log.i(TAG, "movieId = " + mMovieId);
-        mReviewViewModel = ViewModelProviders.of(getActivity(),mFactoryViewModel ).get(MovieDetailsViewModel.class);
+        MovieDetailsViewModel mReviewViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity()), mFactoryViewModel).get(MovieDetailsViewModel.class);
         mReviewViewModel.initReviews(mMovieId);
 
         // Set up observer and callback

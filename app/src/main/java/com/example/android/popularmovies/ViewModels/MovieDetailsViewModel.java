@@ -27,6 +27,7 @@ public class MovieDetailsViewModel extends ViewModel {
     // Reference to the repository used to collect information through network request
     private final MovieRepository mMovieRepository;
 
+
     // Instructs Dagger 2 to provide the MovieRepository parameter
     @Inject
     public MovieDetailsViewModel(MovieRepository movieRepo) {
@@ -35,6 +36,7 @@ public class MovieDetailsViewModel extends ViewModel {
 
     public void init(int movieId) {
         if (this.movie != null) {
+            Log.i(TAG, "Movie already present");
             return;
         }
         movie = mMovieRepository.getMovieById(movieId);
@@ -45,8 +47,8 @@ public class MovieDetailsViewModel extends ViewModel {
     }
 
     /**
-     * This is called after the activity receives the instance of the ViewModel. this will set the id
-     * for the movie currently featured in the MovieDetails activity.
+     * Tells the ViewModel to ask the repo for the trailers associated with the given movie
+     * @param movieId the movieDb id assigned to the selected movie
      */
     public void initTrailers(int movieId) {
         if (mMovieTrailersList != null) {
@@ -57,6 +59,10 @@ public class MovieDetailsViewModel extends ViewModel {
         loadMovieTrailers(movieId);
     }
 
+    /**
+     * Tells the ViewModel to ask the repo for the reviews associated with the given movie
+     * @param movieId the movieDb id assigned to the selected movie
+     */
     public void initReviews(int movieId) {
         if (mMovieReviewsList != null) {
             Log.i(TAG, "Reviews already present");

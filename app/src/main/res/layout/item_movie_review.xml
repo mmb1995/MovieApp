@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/defaultMargin">
@@ -10,20 +8,42 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginEnd="@dimen/defaultMargin"
         android:orientation="vertical">
 
         <TextView
             style="@style/movieTextStyle"
             android:id="@+id/author_text_view"
+            android:textSize="15sp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/defaultMargin"/>
 
-        <TextView
-            style="@style/movieTextStyle"
-            android:id="@+id/review_content_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <com.ms.square.android.expandabletextview.ExpandableTextView
+            xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/expand_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/defaultMargin"
+            expandableTextView:maxCollapsedLines="6"
+            expandableTextView:animDuration="250">
 
+            <TextView
+                style="@style/movieTextStyle"
+                android:id="@+id/expandable_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/expand_collapse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:padding="@dimen/defaultPadding"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/expand_collapse_accessibility" />
+        </com.ms.square.android.expandabletextview.ExpandableTextView>
     </LinearLayout>
 </android.support.v7.widget.CardView>

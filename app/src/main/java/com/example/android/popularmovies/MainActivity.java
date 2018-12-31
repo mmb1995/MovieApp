@@ -24,7 +24,6 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-// COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
         HasSupportFragmentInjector, SwipeRefreshLayout.OnRefreshListener {
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SwipeRefreshLayout mSwipeRefresh;
     private Spinner mSpinner;
     private Bundle mBundle;
-    boolean isRestored;
+    private boolean isRestored;
 
 
     @Inject
@@ -51,18 +50,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         AndroidInjection.inject(this);
 
         // Check if any data was passed into the activity from a previous state
-        String searchTerm;
         if (savedInstanceState != null) {
             Log.i(TAG, "Restoring previous state");
             this.mBundle = savedInstanceState;
-            searchTerm = savedInstanceState.getString(BUNDLE_VALUE, MovieUtils.MOST_POPULAR);
             isRestored = true;
-        } else {
-            searchTerm = MovieUtils.MOST_POPULAR;
         }
+
         mSwipeRefresh = findViewById(R.id.refresh);
         mSwipeRefresh.setOnRefreshListener(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -125,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     /**
-     * Tells the ViewModel to refresh the data
+     * Called when the User clicks on an item in the spinner
      * @param pos the selected position in the spinner
      */
     private void getSelectedValue(int pos) {
@@ -139,6 +135,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.TOP_RATED);
                 break;
             case 2:
+                args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.NOW_PLAYING);
+                break;
+            case 3:
+                args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.COMING_SOON);
+                break;
+            case 4:
                 args.putString(MovieListFragment.BUNDLE_SEARCH_KEY, MovieUtils.FAVORITES);
                 break;
             default:
@@ -147,8 +149,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         createMovieListFragment(args);
     }
 
-    public void createMovieListFragment(Bundle args) {
+    /**
+     * Creates a fragment to display a grid of movie posters
+     * @param args A bundle to pass into the fragment containing the search term selected from the spinner
+     */
+    private void createMovieListFragment(Bundle args) {
         if (isRestored) {
+            // Prevents new fragment from being created after rotation
             Log.i(TAG, "fragment restored from previous state");
             isRestored = false;
         } else {

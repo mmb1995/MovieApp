@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -19,8 +20,10 @@ import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.ViewModels.FactoryViewModel;
 import com.example.android.popularmovies.ViewModels.MovieDetailsViewModel;
 import com.example.android.popularmovies.adapter.MovieTrailerAdapter;
-import com.example.android.popularmovies.adapter.RecyclerViewClickListener;
+import com.example.android.popularmovies.adapter.TrailerClickListener;
 import com.example.android.popularmovies.model.MovieTrailer;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -29,7 +32,7 @@ import butterknife.ButterKnife;
 import dagger.android.support.AndroidSupportInjection;
 
 
-public class TrailerFragment extends Fragment implements RecyclerViewClickListener {
+public class TrailerFragment extends Fragment implements TrailerClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TAG = "TrailerFragment";
     private static final String ID_KEY = "id";
@@ -38,8 +41,6 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
 
     @Inject
     public FactoryViewModel mFactoryViewModel;
-    private int mMovieId;
-    private MovieDetailsViewModel mTrailerViewModel;
     private MovieTrailerAdapter mTrailerAdapter;
 
     public TrailerFragment() {
@@ -47,7 +48,7 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_trailer, container, false);
@@ -57,7 +58,7 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
         mTrailerRecyclerView.setLayoutManager( new LinearLayoutManager(getActivity()));
         mTrailerAdapter = new MovieTrailerAdapter(getActivity(), this);
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
-        ViewCompat.setNestedScrollingEnabled(mTrailerRecyclerView, false);;
+        ViewCompat.setNestedScrollingEnabled(mTrailerRecyclerView, false);
         return rootView;
     }
 
@@ -68,9 +69,12 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
         this.setUpTrailers();
     }
 
-
+    /**
+     * Creates an intent to play a trailer for the given movie on youtube
+     * @param position the position of the trailer in the adapter
+     */
     @Override
-    public void onClick(int position) {
+    public void onTrailerClicked(int position) {
         MovieTrailer selectedTrailer = mTrailerAdapter.getItemAtPosition(position);
         final String trailerUrl = MovieUtils.BASE_YOUTUBE_URL + selectedTrailer.getKey();
         Log.i(TAG, "Starting intent to play video");
@@ -79,7 +83,22 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
         Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
         playTrailerIntent.setData(Uri.parse(trailerUrl));
         Log.i(TAG, "trailer url = " + trailerUrl);
-        startActivity(Intent.createChooser(playTrailerIntent, "Complete action using"));
+        startActivity(playTrailerIntent);
+    }
+
+    /**
+     * Creates an intent to share a link to a trailer for the given movie
+     * @param position the position of the trailer in the adapter
+     */
+    @Override
+    public void onShareTrailer(int position) {
+        MovieTrailer selectedTrailer = mTrailerAdapter.getItemAtPosition(position);
+        final String trailerUrl = MovieUtils.BASE_YOUTUBE_URL + selectedTrailer.getKey();
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, trailerUrl);
+        Log.i(TAG, "sharing movie trailer" + trailerUrl);
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_link_text)));
     }
 
     private void configureDagger() {
@@ -87,9 +106,9 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
     }
 
     private void setUpTrailers() {
-        this.mMovieId = getArguments().getInt(ID_KEY);
+        int mMovieId = Objects.requireNonNull(getArguments()).getInt(ID_KEY);
         Log.i(TAG, "movieId = " + mMovieId);
-        mTrailerViewModel = ViewModelProviders.of(getActivity(),mFactoryViewModel ).get(MovieDetailsViewModel.class);
+        MovieDetailsViewModel mTrailerViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity()), mFactoryViewModel).get(MovieDetailsViewModel.class);
         mTrailerViewModel.initTrailers(mMovieId);
 
         // Set up observer and callback
@@ -109,5 +128,6 @@ public class TrailerFragment extends Fragment implements RecyclerViewClickListen
             }
         });
     }
+
 }
 

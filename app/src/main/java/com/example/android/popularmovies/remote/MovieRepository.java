@@ -5,7 +5,6 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.android.popularmovies.Utils.MovieUtils;
@@ -38,9 +37,6 @@ public class MovieRepository {
     private final MovieApiService mMovieApiService;
     private final MovieDao mMovieDao;
     private final Executor executor;
-
-    // For singleton purposes
-    private static MovieRepository mInstance;
 
     // This is only called if this class has not previously been instantiated
     @Inject
@@ -129,35 +125,37 @@ public class MovieRepository {
     public void addMovie(final Movie movie) {
         // Runs in background thread
         Log.i(TAG, "Adding favorite to database");
-        executor.execute(() -> {
-            mMovieDao.addMovie(movie);
-        });
+        executor.execute(() -> mMovieDao.addMovie(movie));
     }
 
     public void deleteMovie(final Movie movie) {
         Log.i(TAG, "Removing movie from database");
-        executor.execute(() -> {
-            mMovieDao.removeMovie(movie);
-        });
+        executor.execute(() -> mMovieDao.removeMovie(movie));
     }
 
+    /**
+     * Returns the users favorite movies from the database
+     * @return
+     */
     private LiveData<MovieResource> getFavorites() {
         // Gets the data from the database
         final LiveData<List<Movie>> source = mMovieDao.getFavoriteMovies();
 
         // mediator will observe the changes when notified by room
         final MediatorLiveData mediator = new MediatorLiveData();
-        mediator.addSource(source, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(@Nullable List<Movie> favoriteMovies) {
-                Log.d(TAG, "Received data from database");
-                MovieResource resource = MovieResource.success(favoriteMovies);
-                mediator.setValue(resource);
-            }
+        mediator.addSource(source, (Observer<List<Movie>>) favoriteMovies -> {
+            Log.d(TAG, "Received data from database");
+            MovieResource resource = MovieResource.success(Objects.requireNonNull(favoriteMovies));
+            mediator.setValue(resource);
         });
         return mediator;
     }
 
+    /**
+     * Returns an observable resource to monitor the status and data returned about the given movie
+     * @param movieId theMovieDb id given to the selected movie
+     * @return
+     */
     public LiveData<MovieDetailsResource> getMovieById(int movieId) {
         final MutableLiveData<MovieDetailsResource> data = new MutableLiveData<>();
 
@@ -170,14 +168,14 @@ public class MovieRepository {
             } else {
                 mMovieApiService.getMovieById(movieId, MovieUtils.API_KEY).enqueue(new Callback<Movie>() {
                     @Override
-                    public void onResponse(Call<Movie> call, Response<Movie> response) {
+                    public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
                         if (response.isSuccessful()) {
-                            data.postValue(MovieDetailsResource.success(response.body()));
+                            data.postValue(MovieDetailsResource.success(Objects.requireNonNull(response.body())));
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<Movie> call, Throwable t) {
+                    public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
                         t.printStackTrace();
                         data.postValue(MovieDetailsResource.error(t.toString(), null));
                     }

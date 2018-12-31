@@ -28,7 +28,6 @@ public class App extends Application implements HasActivityInjector{
         this.initDagger();
         context = getApplicationContext();
 
-
     }
 
     @Override

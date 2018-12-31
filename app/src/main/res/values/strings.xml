@@ -7,6 +7,8 @@
     <string-array name="dropdown_array">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Now Playing</item>
+        <item>Coming Soon</item>
         <item>Favorites</item>
     </string-array>
 
@@ -17,10 +19,13 @@
     <!-- Movie Details-->
     <string name="trailer_tab">Videos</string>
     <string name="reviews_tab">User Reviews</string>
-    <string name="favorite_button_text">Mark as Favorite</string>
-    <string name="favorite_button_remove_favorite_text">Remove Favorite</string>
 
+    <!--Trailer Fragment -->
+    <string name="share_link_text">Share link with</string>
+
+    <!--Accessibility -->
+    <string name="share_accessibility">Click to share trailer url</string>
+    <string name="expand_collapse_accessibility">Click to expand or collapse this review</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
