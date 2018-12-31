@@ -6,8 +6,10 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +19,7 @@ import com.example.android.popularmovies.ViewModels.MovieDetailsViewModel;
 import com.example.android.popularmovies.adapter.MovieDetailsPageAdapter;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.views.CustomViewPager;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -44,6 +47,8 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     @BindView(R.id.summaryTextView) TextView mSummaryView;
     @BindView(R.id.runtimeTextView) TextView mRuntimeView;
     @BindView(R.id.detailPosterImageView) ImageView mPosterImageView;
+    @BindView(R.id.detailPosterProgressBar)
+    ProgressBar mProgressBar;
     @BindView(R.id.favorites_button)
     CheckBox mFavoritesButton;
     @BindView(R.id.view_pager)
@@ -95,9 +100,17 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
                 + mMovie.getPosterPath();
         Picasso.get()
                 .load(posterUrl)
-                .placeholder(R.drawable.loading_image)
-                .error(R.drawable.poster_error)
-                .into(mPosterImageView);
+                .into(mPosterImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                });
 
         mTitleView.setText(mMovie.getTitle());
 

@@ -97,7 +97,7 @@ public class TrailerFragment extends Fragment implements TrailerClickListener {
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, trailerUrl);
         Log.i(TAG, "sharing movie trailer" + trailerUrl);
-        startActivity(Intent.createChooser(shareIntent, "Share with"));
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_link_text)));
     }
 
     private void configureDagger() {

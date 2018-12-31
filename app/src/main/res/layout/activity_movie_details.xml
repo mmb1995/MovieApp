@@ -12,6 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:id="@+id/detailPosterProgressBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/detailPosterImageView"
+            app:layout_constraintEnd_toEndOf="@+id/detailPosterImageView"
+            app:layout_constraintStart_toStartOf="@+id/detailPosterImageView"
+            app:layout_constraintTop_toTopOf="@+id/detailPosterImageView"
+            app:layout_constraintVertical_chainStyle="spread_inside"/>
+
         <ImageView
             android:id="@+id/detailPosterImageView"
             android:layout_width="0dp"
@@ -28,11 +40,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            card_view:cardBackgroundColor="@color/colorPrimary"
             app:layout_constraintBottom_toTopOf="@+id/cardView3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detailPosterImageView"
-            card_view:cardBackgroundColor="@color/colorPrimary">
+            app:layout_constraintTop_toBottomOf="@+id/detailPosterImageView">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"

@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Utils.MovieUtils;
 import com.example.android.popularmovies.model.Movie;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -49,12 +51,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     + movie.getPosterPath();
         Log.i(TAG, "Poster at: " + posterUrl);
 
+        // show loading indicator
+        //holder.mProgressBar.setVisibility(View.VISIBLE);
+
         // Set the image resource for the ImageView
         Picasso.get()
                 .load(posterUrl)
-                .placeholder(R.drawable.loading_image)
                 .error(R.drawable.poster_error)
-                .into(holder.mMoviePosterImageView);
+                .into(holder.mMoviePosterImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.mProgressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        holder.mProgressBar.setVisibility(View.GONE);
+                    }
+                });
 
     }
 
@@ -92,12 +106,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      */
     public static class MovieViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener {
         final ImageView mMoviePosterImageView;
+        final ProgressBar mProgressBar;
         private final RecyclerViewClickListener mListener;
 
 
         MovieViewHolder(View itemView, RecyclerViewClickListener listener) {
             super(itemView);
             mMoviePosterImageView = itemView.findViewById(R.id.ivMoviePosterItem);
+            mProgressBar = itemView.findViewById(R.id.posterProgressBar);
             mListener = listener;
             itemView.setOnClickListener(this);
         }
