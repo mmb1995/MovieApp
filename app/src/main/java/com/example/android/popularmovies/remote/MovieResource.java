@@ -23,11 +23,11 @@ public class MovieResource<T> {
 
 
     public static <T>MovieResource<T> success(@NonNull List<T> data) {
-        return new MovieResource<T>(data, Status.SUCCESS, null);
+        return new MovieResource<>(data, Status.SUCCESS, null);
     }
 
     public static <T>MovieResource<T> error(Throwable error) {
-        return new MovieResource<T>(null, Status.ERROR, error);
+        return new MovieResource<>(null, Status.ERROR, error);
     }
 
     public List<T> getData() {

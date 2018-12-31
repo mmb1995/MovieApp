@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/defaultMargin">
@@ -44,7 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:padding="@dimen/defaultPadding"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/expand_collapse_accessibility" />
         </com.ms.square.android.expandabletextview.ExpandableTextView>
     </LinearLayout>
 </android.support.v7.widget.CardView>

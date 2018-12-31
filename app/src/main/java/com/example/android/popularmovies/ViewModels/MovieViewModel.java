@@ -20,9 +20,6 @@ public class MovieViewModel extends ViewModel {
     // Reference to the repository used to collect information through network requests
     private final MovieRepository mMovieRepository;
 
-    //NOTE: For testing
-    private int count = 0;
-
     // Tells dagger 2 to inject the MovieRepository parameter
     @Inject
     public MovieViewModel(MovieRepository movieRepository) {
@@ -45,8 +42,8 @@ public class MovieViewModel extends ViewModel {
      * @param searchTerm
      */
     public void init(String searchTerm) {
-        count++;
-        Log.i(TAG,"Setting up view model" + count);
+
+        Log.i(TAG,"Setting up view model");
         if (this.mMovieResource != null) {
             // Don't create a new instance if one already exists
             Log.i(TAG, "Data already present");

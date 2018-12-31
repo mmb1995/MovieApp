@@ -66,7 +66,7 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
     public static class MovieTrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         final TextView mTrailerView;
         final ImageButton mShareButton;
-        private TrailerClickListener mListener;
+        private final TrailerClickListener mListener;
 
         MovieTrailerViewHolder(View itemView, TrailerClickListener listener) {
             super(itemView);

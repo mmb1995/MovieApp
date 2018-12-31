@@ -23,6 +23,9 @@
     <!--Trailer Fragment -->
     <string name="share_link_text">Share link with</string>
 
+    <!--Accessibility -->
+    <string name="share_accessibility">Click to share trailer url</string>
+    <string name="expand_collapse_accessibility">Click to expand or collapse this review</string>
     <!-- TODO: Remove or change this placeholder text -->
 
 </resources>

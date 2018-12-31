@@ -13,8 +13,8 @@ import com.example.android.popularmovies.fragment.TrailerFragment;
 public class MovieDetailsPageAdapter extends FragmentPagerAdapter {
     private static final int NUM_ITEMS = 2;
     private static final String ID_KEY = "id";
-    private int mMovieId;
-    private Context mContext;
+    private final int mMovieId;
+    private final Context mContext;
 
     public MovieDetailsPageAdapter(FragmentManager fragmentManager, int movieId, Context context) {
         super(fragmentManager);

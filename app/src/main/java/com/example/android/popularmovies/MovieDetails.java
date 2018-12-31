@@ -64,16 +64,14 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     AppBarLayout mAppBar;
 
     private Movie mMovie;
-    private MovieDetailsPageAdapter mAdapter;
     private MovieDetailsViewModel mDetailsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details_2);
+        setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Only show title when toolbar is collapsed
         mAppBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
@@ -162,7 +160,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     }
 
     /**
-     * Formats the runtime returned by the viewmodel
+     * Formats the runtime returned by the ViewModel
      */
     private void setRuntime() {
         Integer runtime = mMovie.getRuntime();
@@ -182,7 +180,7 @@ public class MovieDetails extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void setUpViewPager() {
-        mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovie.getId(), this);
+        MovieDetailsPageAdapter mAdapter = new MovieDetailsPageAdapter(getSupportFragmentManager(), mMovie.getId(), this);
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }

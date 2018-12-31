@@ -145,7 +145,7 @@ public class MovieRepository {
         final MediatorLiveData mediator = new MediatorLiveData();
         mediator.addSource(source, (Observer<List<Movie>>) favoriteMovies -> {
             Log.d(TAG, "Received data from database");
-            MovieResource resource = MovieResource.success(favoriteMovies);
+            MovieResource resource = MovieResource.success(Objects.requireNonNull(favoriteMovies));
             mediator.setValue(resource);
         });
         return mediator;

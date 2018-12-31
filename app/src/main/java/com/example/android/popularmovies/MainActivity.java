@@ -24,7 +24,6 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-// COMPLETED Refactor to remove AsyncTask and connect MainActivity with the ViewModel
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
         HasSupportFragmentInjector, SwipeRefreshLayout.OnRefreshListener {
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         mSwipeRefresh = findViewById(R.id.refresh);
         mSwipeRefresh.setOnRefreshListener(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -122,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     /**
-     * Tells the ViewModel to refresh the data
+     * Called when the User clicks on an item in the spinner
      * @param pos the selected position in the spinner
      */
     private void getSelectedValue(int pos) {
@@ -150,8 +149,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         createMovieListFragment(args);
     }
 
+    /**
+     * Creates a fragment to display a grid of movie posters
+     * @param args A bundle to pass into the fragment containing the search term selected from the spinner
+     */
     private void createMovieListFragment(Bundle args) {
         if (isRestored) {
+            // Prevents new fragment from being created after rotation
             Log.i(TAG, "fragment restored from previous state");
             isRestored = false;
         } else {

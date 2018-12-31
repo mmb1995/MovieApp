@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.MovieDetails;
@@ -40,6 +42,8 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
 
     @BindView(R.id.rvMoviePosters)
     RecyclerView mPosterRecyclerView;
+    @BindView(R.id.fragmentProgressBar)
+    ProgressBar mProgressBar;
 
     @Inject
     public FactoryViewModel mFactoryViewModel;
@@ -61,7 +65,7 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
@@ -117,14 +121,14 @@ public class MovieListFragment extends Fragment implements RecyclerViewClickList
                 switch (response.getStatus()) {
                     case SUCCESS:
                         Log.i(TAG, "displaying movie data");
+                        mProgressBar.setVisibility(View.GONE);
                         this.mAdapter.setMoviesList(response.getData());
                         break;
                     case ERROR:
                         Log.i(TAG, response.getError().toString());
+                        mProgressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), getString(R.string.apiError),
                                 Toast.LENGTH_SHORT).show();
-                        break;
-                    case LOADING:
                         break;
                     default:
                         break;
